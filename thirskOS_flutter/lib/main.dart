@@ -12,6 +12,7 @@ import 'dart:io';
 import 'event_display.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';// for later use with video links
+import 'strings/string_definer.dart';
 //imported packages etc.
 
 part 'main.g.dart'; // link to generated dart code (ask Roger)
@@ -241,50 +242,50 @@ class _MenuDisplayState extends State<MenuDisplay> {
     // than having to individually change instances of widgets.
 
     return Container(
-      child: FutureBuilder<String>(
-        future: fetchMenu(),
-        builder: (context,snapshot){
-          if(snapshot.hasData){
-            jsonRetrieved = snapshot.data;
-            jsonCached = snapshot.data;
-            widget.menuCache.writeJson(snapshot.data);
-            displayMenu = WeekMenu.directFromJson(snapshot.data);
-            return Column(
-              //crossAxisAlignment: CrossAxisAlignment.start,
-              children: displayData(displayMenu),
-            );
-          } else if(snapshot.hasError){
-            if(jsonCached == '') {
-              return Text('Looks like you has an error:\n${snapshot
-                  .error}\nYou should probably send help.',style: TextStyle(color: Colors.red),);
-            } else {
-              displayMenu = WeekMenu.directFromJson(jsonCached);
-              return ListView(
-                //crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text('Looks like you has an error:\n${snapshot
-                      .error}\nWe found your latest cache.',style: TextStyle(color: Colors.red),),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: displayData(displayMenu),
-                  ),
-                ],
+        child: FutureBuilder<String>(
+          future: fetchMenu(),
+          builder: (context,snapshot){
+            if(snapshot.hasData){
+              jsonRetrieved = snapshot.data;
+              jsonCached = snapshot.data;
+              widget.menuCache.writeJson(snapshot.data);
+              displayMenu = WeekMenu.directFromJson(snapshot.data);
+              return Column(
+                //crossAxisAlignment: CrossAxisAlignment.start,
+                children: displayData(displayMenu),
               );
+            } else if(snapshot.hasError){
+              if(jsonCached == '') {
+                return Text('Looks like you has an error:\n${snapshot
+                    .error}\nYou should probably send help.',style: TextStyle(color: Colors.red),);
+              } else {
+                displayMenu = WeekMenu.directFromJson(jsonCached);
+                return ListView(
+                  //crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text('Looks like you has an error:\n${snapshot
+                        .error}\nWe found your latest cache.',style: TextStyle(color: Colors.red),),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: displayData(displayMenu),
+                    ),
+                  ],
+                );
+              }
             }
-          }
-          return Column(
-            children: <Widget>[
-              CircularProgressIndicator(),
-              Text('Loading...', style: TextStyle(color: Colors.white)),
-            ],
-            crossAxisAlignment: CrossAxisAlignment.center,
-          );
-        },
-        /*Column(
+            return Column(
+              children: <Widget>[
+                CircularProgressIndicator(),
+                Text('Loading...', style: TextStyle(color: Colors.white)),
+              ],
+              crossAxisAlignment: CrossAxisAlignment.center,
+            );
+          },
+          /*Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: entryList,
       ),*/
-      )
+        )
     );
   }
 }
@@ -369,25 +370,18 @@ class HomePage extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) { //builds the page
-
-    var assetsImage = new AssetImage('assets/title.png');
-    var image = new Image(image: assetsImage, alignment: new Alignment(-0.87,-0.87),);
-    var nwtext = new Text("Check back soon for next week's lunch menu!", style: new TextStyle( fontSize: 14, color: Colors.white, ), textAlign: TextAlign.center,);
-    var foc = new Text("Focus Rooms:", style: new TextStyle( fontSize: 22, color: Colors.white, fontFamily: 'LEMONMILKLIGHT', letterSpacing: 4 ), textAlign: TextAlign.center,);
-    var lm = new Text("Lunch Menu:", style: new TextStyle( fontSize: 22, color: Colors.white, fontFamily: 'LEMONMILKLIGHT', letterSpacing: 4 ), textAlign: TextAlign.center, );
-    var timeText = new Text( new DateFormat("| EEEE | MMM d | yyyy |").format(new DateTime.now(),), style: new TextStyle( fontSize: 16, color: Colors.white, letterSpacing: 4, fontFamily: 'LEMONMILKLIGHT'),  textAlign: TextAlign.center,);
     //variables of images and text to be on the page
 
     return new Container( child: ListView ( //dictates page format
       children: <Widget>[
 
         new RawMaterialButton(
-        child: Image.asset('assets/title.png', ),
-        onPressed: () {
-        Navigator.push(context,
-        MaterialPageRoute(builder: (context) => CreditPage()),
-        );
-        },
+          child: Image.asset('assets/title.png', ),
+          onPressed: () {
+            Navigator.push(context,
+              MaterialPageRoute(builder: (context) => CreditPage()),
+            );
+          },
         ),
         // thirskOS logo at top of home page
         // the image also serves as a secret button, once tapped it takes the user to the development credits page
@@ -396,7 +390,16 @@ class HomePage extends StatelessWidget{
           height: 5.0,
         ), //these containers act as spacers between pieces of content on the page
 
-        timeText,
+        new Text(
+          new DateFormat("| EEEE | MMM d | yyyy |").format(new DateTime.now(),),
+          style: new TextStyle(
+              fontSize: 16,
+              color: Colors.white,
+              letterSpacing: 4,
+              fontFamily: 'LEMONMILKLIGHT'
+          ),
+          textAlign: TextAlign.center,
+        ),
 
 
         //when video announcments are created at thirsk, instead of using a video player there should be a list of links inside a scrollable text box that expands
@@ -407,7 +410,16 @@ class HomePage extends StatelessWidget{
           height: 10.0,
         ),
 
-        lm,
+        new Text(
+          getString('lunch/menu_prompt'),
+          style: new TextStyle(
+              fontSize: 22,
+              color: Colors.white,
+              fontFamily: 'LEMONMILKLIGHT',
+              letterSpacing: 4
+          ),
+          textAlign: TextAlign.center,
+        ),
 
         MenuDisplay(menuCache: MenuCache()), //grabs cached lunch menu (ask Roger)
 
@@ -415,7 +427,11 @@ class HomePage extends StatelessWidget{
           height: 5.0,
         ),
 
-        nwtext,
+        new Text(
+          getString('lunch/check_back_soon'),
+          style: new TextStyle( fontSize: 14, color: Colors.white, ),
+          textAlign: TextAlign.center,
+        ),
 
 
       ],
@@ -428,19 +444,8 @@ class CreditPage extends StatelessWidget{  //Development credits page
 
   @override
   Widget build(BuildContext context) {
-    var image = new AssetImage('assets/icf.png');
-    var bobimage = new Image(image: image, height: 160,);
-    var sText = new Text("THIRSK OUTER SPACE", style: new TextStyle( fontFamily: 'ROCK', letterSpacing: 4, fontSize: 22, color: Color(0xFF5d9dfa),),);
-    var vn = new Text("Closed Alpha: v0.1", style: new TextStyle( fontFamily: 'ROCK', fontSize: 12, color: Color(0xFF5d9dfa), letterSpacing: 2),);
-    var ct = new Text("Credits(2018~2019):", style: new TextStyle( fontFamily: 'ROCK', fontSize: 22, color: Colors.white, letterSpacing: 2),);
-    var dev1 = new Text("Creator/Lead App Developer: Christopher Samra", textAlign: TextAlign.center, style: TextStyle(color: Colors.white, fontSize: 14),);
-    var dev2 = new Text("Prototype App Co-Developer: Hasin Zaman", textAlign: TextAlign.center, style: TextStyle(color: Colors.white, fontSize: 14),);
-    var dev3 = new Text("App Co-Developer: Roger Cao", textAlign: TextAlign.center, style: TextStyle(color: Colors.white, fontSize: 14),);
-    var dev4 = new Text("Backend Developer: Dunedin Molnar", textAlign: TextAlign.center, style: TextStyle(color: Colors.white, fontSize: 14),);
-    var dev5 = new Text("Backend Developer: Hasin Zaman", textAlign: TextAlign.center, style: TextStyle(color: Colors.white, fontSize: 14),);
     return new Material( color: Color(0xff424242), child: Column(
       children: <Widget>[
-
 
         new Container(
           height: 30.0,
@@ -448,7 +453,10 @@ class CreditPage extends StatelessWidget{  //Development credits page
         ),
 
         new RawMaterialButton(
-          child: const Text('Back', style: TextStyle(color: Colors.white, fontSize: 18,),),
+          child: Text(
+            getString('misc/back'),
+            style: TextStyle(color: Colors.white, fontSize: 18,),
+          ),
           shape: StadiumBorder(),
           highlightColor: Color(0x0083ff),
           padding: EdgeInsets.all(5),
@@ -465,45 +473,68 @@ class CreditPage extends StatelessWidget{  //Development credits page
 
         ),
 
-        bobimage,
+        new Image(
+          image: new AssetImage('assets/icf.png'),
+          height: 160,
+        ),
 
         new Container(
           height: 10.0,
 
         ),
 
-        sText,
+        new Text(
+          getString('credit/app_title'),
+          style: new TextStyle(
+            fontFamily: 'ROCK',
+            letterSpacing: 4,
+            fontSize: 22,
+            color: Color(0xFF5d9dfa),
+          ),
+        ),
 
-        vn,
+        new Text(
+          getString('credit/version'),
+          style: new TextStyle(
+            fontFamily: 'ROCK',
+            fontSize: 12,
+            color: Color(0xFF5d9dfa),
+            letterSpacing: 2,
+          ),
+        ),
 
         new Container(
           height: 20.0,
 
         ),
 
-        ct,
+        new Text(
+          getString('credit/2018/header'),
+          style: new TextStyle(
+              fontFamily: 'ROCK',
+              fontSize: 22,
+              color: Colors.white,
+              letterSpacing: 2),
+        ),
 
         new Container(
           height: 3.0,
 
         ),
 
-        dev1,
-        dev2,
-        dev3,
-        dev4,
-        dev5,
+        new Text(
+          getString('credit/2018/credit'),
+          textAlign: TextAlign.left,
+          style: TextStyle(color: Colors.white,background: Paint()..color = Colors.blue, fontSize: 14),
 
-
-
+        ),
       ],
-    ),);
+    ),
+    );
   }
 } //Dev Credits Page
 
 class ThrivePage extends StatelessWidget{  //Thirve Page
-
-
 
   Future launchDockURL(String dockURL) async {
     if (await canLaunch(dockURL)){
@@ -854,7 +885,15 @@ class ThrivePage extends StatelessWidget{  //Thirve Page
 
 
         new RawMaterialButton(
-          child: const Text('POST SECONDARY', style: TextStyle(color: Colors.white, fontFamily: 'LEMONMILKLIGHT', fontSize: 18, letterSpacing: 4),),
+          child: Text(
+            'POST SECONDARY',
+            style: TextStyle(
+                color: Colors.white,
+                fontFamily: 'LEMONMILKLIGHT',
+                fontSize: 18,
+                letterSpacing: 4,
+            ),
+          ),
           shape: StadiumBorder(),
           highlightColor: Color(0x0083ff),
           padding: EdgeInsets.all(10),
@@ -959,7 +998,7 @@ class DiplomaPage extends StatelessWidget{   //Built in page for Exam Resources
         ),
 
         new RawMaterialButton(
-          child: const Text('Back', style: TextStyle(color: Colors.white, fontSize: 18,),),
+          child: Text(getString('misc/back'), style: TextStyle(color: Colors.white, fontSize: 18,),),
           shape: StadiumBorder(),
           highlightColor: Color(0x0083ff),
           padding: EdgeInsets.all(5),
@@ -986,7 +1025,7 @@ class DiplomaPage extends StatelessWidget{   //Built in page for Exam Resources
         rt,
 
         new Container(
-        height: 10.0,
+          height: 10.0,
 
         ),
 
@@ -1108,7 +1147,7 @@ class CtsPage extends StatelessWidget{   //CTS page
         ),
 
         new RawMaterialButton(
-          child: const Text('Back', style: TextStyle(color: Colors.white, fontSize: 18,),),
+          child: Text(getString('misc/back'), style: TextStyle(color: Colors.white, fontSize: 18,),),
           shape: StadiumBorder(),
           highlightColor: Color(0x0083ff),
           padding: EdgeInsets.all(5),
@@ -1197,7 +1236,7 @@ class SportsPage extends StatelessWidget{
         ),
 
         new RawMaterialButton(
-          child: const Text('Back', style: TextStyle(color: Colors.white, fontSize: 18,),),
+          child: Text(getString('misc/back'), style: TextStyle(color: Colors.white, fontSize: 18,),),
           shape: StadiumBorder(),
           highlightColor: Color(0x0083ff),
           padding: EdgeInsets.all(5),
