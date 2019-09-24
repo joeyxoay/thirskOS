@@ -1,5 +1,5 @@
 import 'string_getter.dart';
-//The dictionary of string referred to in the app. Helps organize strings
+///The dictionary of string referred to in the app. Helps organize strings
 DisplayString stringAsset = DisplayString(stringMap:
 {
   'credit/app_title' : 'THIRSK OUTER SPACE',

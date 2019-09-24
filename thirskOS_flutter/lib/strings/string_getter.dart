@@ -1,3 +1,4 @@
+///Class for a dictionary of display string and ways to retrieve the string.
 class DisplayString{
   Map<String,String> stringMap;
   DisplayString({this.stringMap});

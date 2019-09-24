@@ -133,7 +133,7 @@ List<Widget> displayData(WeekMenu displayMenu){
     oneEntryDisplay.add(Text(''));
     oneEntryDisplay.add(Text(
       '${dayEntry.menuDate}',
-      style: TextStyle(fontWeight: FontWeight.bold,fontSize: 18, color: Color(0xFFFFFFFF), letterSpacing: 4, fontFamily: 'LEMONMILKLIGHT' ),
+      style: TextStyle(fontWeight: FontWeight.bold,fontSize: 18, color: Colors.white, letterSpacing: 4, fontFamily: 'LEMONMILKLIGHT' ),
       textAlign: TextAlign.center,
     ),
     );
@@ -266,14 +266,14 @@ class _MenuDisplayState extends State<MenuDisplay> {
               var _displayData = displayData(displayMenu);
               return Column(
                 //crossAxisAlignment: CrossAxisAlignment.start,
-                children: 
-                  _displayData.length != 0 ?
-                  displayData(displayMenu) :
-                  Text(
-                    getString('lunch/no_entry'),
-                    style: new TextStyle( fontSize: 14, color: Colors.white, ),
-                    textAlign: TextAlign.center,
-                  ),
+                children:
+                _displayData.length != 0 ?
+                displayData(displayMenu) :
+                Text(
+                  getString('lunch/no_entry'),
+                  style: new TextStyle(fontSize: 14, color: Colors.white,),
+                  textAlign: TextAlign.center,
+                ),
               );
             } else if(snapshot.hasError){
               if(jsonCached == '') {
@@ -343,14 +343,6 @@ class NavigationButton extends StatelessWidget{
 //page displayed on startup
 class HomePage extends StatelessWidget{
 
-  Future launchfoconURL(String foconURL) async {
-    if (await canLaunch(foconURL)){
-      await launch(foconURL, forceSafariVC: true, forceWebView: false);
-    } else {
-      print("cant launch webpage");
-    }
-
-  }
   //if/else statement which essentially says when the focus/connect rooms link is to be opened, how will it be opened on both IOS and ANDROID
   //else just gives a print statement
 
@@ -509,108 +501,57 @@ class CreditPage extends StatelessWidget{  //Development credits page
     );
   }
 } //Dev Credits Page
+///The button widget for linking to resources in the thrive page.
+class ThriveButton extends StatelessWidget{
 
+  final String buttonName;
+  //final Color highlightColor;
+  final Color fillColor;
+  final Function onPressed;
+
+  ThriveButton({Key key, @required this.buttonName,@required this.fillColor, @required this.onPressed}) : super(key: key);
+  @override
+  Widget build(BuildContext context){
+    return new RawMaterialButton(  //creates button
+      child: Text(buttonName, style: TextStyle(color: Colors.white, fontFamily: 'LEMONMILKLIGHT', fontSize: 18, letterSpacing: 4),),
+      shape: StadiumBorder(), //style & shape of button
+      highlightColor: Color(0x0083ff), //dw about this
+      padding: EdgeInsets.all(10), //space between edge of button and text
+      fillColor: fillColor, //button colour
+      splashColor: Color(0xFFFFFFFF), //colour of button when tapped
+
+      onPressed: onPressed,
+    );
+  }
+}
+///A class to store data for the links to a resource in the thrive page
+class ThriveButtonData{
+  String name;
+  Function clickAction;
+  ThriveButtonData(this.name,this.clickAction);
+}
+///Link to a url. Opens as a web page for some reason.
+Future launchURL(String url) async {
+  if (await canLaunch(url)){
+    await launch(url, forceSafariVC: true, forceWebView: false);
+  } else {
+    print("Fail to launch $url.");
+  }
+
+}
+///A simple command to go to a page in the app.
+void goToPage(BuildContext context,Widget page){
+  Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => page), //goes to built in page when button pressed
+  );
+}
 class ThrivePage extends StatelessWidget{  //Thrive Page
 
-  Future launchDockURL(String dockURL) async {
-    if (await canLaunch(dockURL)){
-      await launch(dockURL, forceSafariVC: true, forceWebView: false);
-    } else {
-      print("cant launch dock webpage");
-    }
-
-  }
-
-  Future launchClubURL(String clubURL) async {
-    if (await canLaunch(clubURL)){
-      await launch(clubURL, forceSafariVC: true, forceWebView: false);
-    } else {
-      print("cant launch webpage");
-    }
-
-  }
-
-  Future launchStaffURL(String staffURL) async {
-    if (await canLaunch(staffURL)){
-      await launch(staffURL, forceSafariVC: true, forceWebView: false);
-    } else {
-      print("cant launch webpage");
-    }
-
-  }
-
-  Future launchMakerURL(String makerURL) async {
-    if (await canLaunch(makerURL)){
-      await launch(makerURL, forceSafariVC: true, forceWebView: false);
-    } else {
-      print("cant launch webpage");
-    }
-
-  }
-
-  Future launchScholarURL(String scholarURL) async {
-    if (await canLaunch(scholarURL)){
-      await launch(scholarURL, forceSafariVC: true, forceWebView: false);
-    } else {
-      print("cant launch webpage");
-    }
-
-  }
-
-
-  Future launchConnectURL(String connectURL) async {
-    if (await canLaunch(connectURL)){
-      await launch(connectURL, forceSafariVC: true, forceWebView: false);
-    } else {
-      print("cant launch webpage");
-    }
-
-  }
-
-  Future launchEdURL(String edURL) async {
-    if (await canLaunch(edURL)){
-      await launch(edURL, forceSafariVC: true, forceWebView: false);
-    } else {
-      print("cant launch webpage");
-    }
-
-  }
-
-  Future launchfaURL(String faURL) async {
-    if (await canLaunch(faURL)){
-      await launch(faURL, forceSafariVC: true, forceWebView: false);
-    } else {
-      print("cant launch webpage");
-    }
-
-  }
-
-  Future launchcoURL(String coURL) async {
-    if (await canLaunch(coURL)){
-      await launch(coURL, forceSafariVC: true, forceWebView: false);
-    } else {
-      print("cant launch webpage");
-    }
-
-  }
-
-  Future launchpsURL(String connectURL) async {
-    if (await canLaunch(psURL)){
-      await launch(psURL, forceSafariVC: true, forceWebView: false);
-    } else {
-      print("cant launch webpage");
-    }
-
-  }
-
-  Future launchgradURL(String connectURL) async {
-    if (await canLaunch(gradURL)){
-      await launch(gradURL, forceSafariVC: true, forceWebView: false);
-    } else {
-      print("cant launch webpage");
-    }
-
-  }
+  final List<ThriveButtonData> buttons;
+  final Color initColor;
+  final Color finalColor;
+  ThrivePage({Key key, this.buttons, this.initColor, this.finalColor}) : super(key:key);
 
   //if statements which essentially say when the links are to be opened, how they are going to be opened on both IOS and ANDROID
   //else just gives a print statement
@@ -618,303 +559,43 @@ class ThrivePage extends StatelessWidget{  //Thrive Page
 
   @override
   Widget build(BuildContext context) {
+    var returnVal = <Widget>[
+      new Image(
+        image: new AssetImage('assets/title.png'),
+        alignment: new Alignment(-0.87, -0.87),
+      ),
 
+      new Container(
+        height: 5.0,
+      ),
+
+      new Text(
+        getString('thrive/thrive_prompt'),
+        style: new TextStyle(
+          fontSize: 16,
+          color: Colors.white,
+          fontFamily: 'LEMONMILKLIGHT',
+          letterSpacing: 4,
+        ),
+        textAlign: TextAlign.center,
+      ),
+
+      new Container(
+        height: 10.0,
+      ),
+    ];
+    var i = 0;
+    for(var oneButtonData in buttons){
+      returnVal.add(new ThriveButton(
+          buttonName: oneButtonData.name,
+          fillColor: (HSVColor.lerp(HSVColor.fromColor(initColor), HSVColor.fromColor(finalColor), buttons.length <= 1 ? 0 : i.toDouble() / buttons.length).toColor()),
+          onPressed: oneButtonData.clickAction
+      ));
+      returnVal.add(new Container(height: 5.0,));
+      i++;
+    }
     return new Container( child: ListView(
-      children: <Widget>[
-
-        new Image(
-          image: new AssetImage('assets/title.png'),
-          alignment: new Alignment(-0.87, -0.87),
-        ),
-
-        new Container(
-          height: 5.0,
-        ),
-
-        new Text(
-          getString('thrive/thrive_prompt'),
-          style: new TextStyle(
-            fontSize: 16,
-            color: Colors.white,
-            fontFamily: 'LEMONMILKLIGHT',
-            letterSpacing: 4,
-          ),
-          textAlign: TextAlign.center,
-        ),
-
-        new Container(
-          height: 10.0,
-        ),
-
-        new RawMaterialButton(  //creates button
-          child: const Text('CLUBS', style: TextStyle(color: Colors.white, fontFamily: 'LEMONMILKLIGHT', fontSize: 18, letterSpacing: 4),),
-          shape: StadiumBorder(), //style & shape of button
-          highlightColor: Color(0x0083ff), //dw about this
-          padding: EdgeInsets.all(10), //space between edge of button and text
-          fillColor: Color(0xff4bc5f2), //button colour
-          splashColor: Color(0xFFFFFFFF), //colour of button when tapped
-
-          onPressed: () {
-            launchClubURL(clubURL);
-          },
-        ),
-        //goes to url when pressed
-
-        new Container(
-          height: 5.0,
-        ),
-
-        new RawMaterialButton(
-          child: const Text('FINE ARTS', style: TextStyle(color: Colors.white, fontFamily: 'LEMONMILKLIGHT', fontSize: 18, letterSpacing: 4),),
-          shape: StadiumBorder(),
-          highlightColor: Color(0x4DB4ED),
-          padding: EdgeInsets.all(10),
-          fillColor: Color(0xff4DB4ED),
-          splashColor: Color(0xFFFFFFFF),
-
-          onPressed: () {
-            /*Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => fineArtsP()),
-            ); if fine arts is switched to a built in page instead of a weblink use this code*/
-            launchfaURL(faURL);
-          },
-        ),
-
-        new Container(
-          height: 5.0,
-        ),
-
-        new RawMaterialButton(
-          child: const Text('CTS', style: TextStyle(color: Colors.white, fontFamily: 'LEMONMILKLIGHT', fontSize: 18, letterSpacing: 4),),
-          shape: StadiumBorder(),
-          highlightColor: Color(0x50A3E8),
-          padding: EdgeInsets.all(10),
-          fillColor: Color(0xff50A3E8),
-          splashColor: Color(0xFFFFFFFF),
-
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => CtsPage()), //goes to built in page when button pressed
-            );
-          },
-        ),
-
-        new Container(
-          height: 5.0,
-        ),
-
-        new RawMaterialButton(
-          child: const Text('SPORTS', style: TextStyle(color: Colors.white, fontFamily: 'LEMONMILKLIGHT', fontSize: 18, letterSpacing: 4),),
-          shape: StadiumBorder(),
-          highlightColor: Color(0x5294E4),
-          padding: EdgeInsets.all(10),
-          fillColor: Color(0xff5294E4), //44a5ff  4f95f7
-          splashColor: Color(0xFFFFFFFF),
-
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => SportsPage()),
-            );
-          },
-
-        ),
-        new Container(
-          height: 5.0,
-        ),
-
-        new RawMaterialButton(
-          child: const Text('THE DOCK', style: TextStyle(color: Colors.white, fontFamily: 'LEMONMILKLIGHT', fontSize: 18, letterSpacing: 4),),
-          shape: StadiumBorder(),
-          highlightColor: Color(0x0083ff),
-          padding: EdgeInsets.all(10),
-          fillColor: Color(0xff548CE2),
-          splashColor: Color(0xFFFFFFFF),
-
-          onPressed: () {
-            launchDockURL(dockURL);
-          },
-        ),
-        new Container(
-          height: 5.0,
-        ),
-
-        new RawMaterialButton(
-          child: const Text('EDVENTURE', style: TextStyle(color: Colors.white, fontFamily: 'LEMONMILKLIGHT', fontSize: 18, letterSpacing: 4),),
-          shape: StadiumBorder(),
-          highlightColor: Color(0x0083ff),
-          padding: EdgeInsets.all(10),
-          fillColor: Color(0xff5583DF),
-          splashColor: Color(0xFFFFFFFF),
-
-          onPressed: () {
-            launchEdURL(edURL);
-          },
-        ),
-        new Container(
-          height: 5.0,
-        ),
-
-        new RawMaterialButton(
-          child: const Text('CONNECT NEWSLETTER', style: TextStyle(color: Colors.white, fontFamily: 'LEMONMILKLIGHT', fontSize: 18, letterSpacing: 4),),
-          shape: StadiumBorder(),
-          highlightColor: Color(0x6a7ffc),
-          padding: EdgeInsets.all(10),
-          fillColor: Color(0xff567BDD),
-          splashColor: Color(0xFFFFFFFF),
-
-          onPressed: () {
-            launchConnectURL(connectURL);
-          },
-        ),
-        new Container(
-          height: 5.0,
-        ),
-
-        new RawMaterialButton(
-          child: const Text('TEACHER CONTACT LIST', style: TextStyle(color: Colors.white, fontFamily: 'LEMONMILKLIGHT', fontSize: 18, letterSpacing: 4),),
-          shape: StadiumBorder(),
-          highlightColor: Color(0x5b69ff),
-          padding: EdgeInsets.all(10),
-          fillColor: Color(0xff586ED9),
-          splashColor: Color(0xFFFFFFFF),
-
-          onPressed: () {
-            launchStaffURL(staffURL);
-          },
-        ),
-        new Container(
-          height: 5.0,
-        ),
-
-        new RawMaterialButton(
-          child: const Text('CAREER OPPOURTUNITIES', style: TextStyle(color: Colors.white, fontFamily: 'LEMONMILKLIGHT', fontSize: 18, letterSpacing: 4),),
-          shape: StadiumBorder(),
-          highlightColor: Color(0x0083ff),
-          padding: EdgeInsets.all(10),
-          fillColor: Color(0xff5A63D6),
-          splashColor: Color(0xFFFFFFFF),
-
-          onPressed: () {
-            /*Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => gradBeyondP()),
-            );*/
-            launchcoURL(coURL);
-          },
-        ),
-        new Container(
-          height: 5.0,
-        ),
-
-
-        new RawMaterialButton(
-          child: const Text('SCHOLARSHIPS', style: TextStyle(color: Colors.white, fontFamily: 'LEMONMILKLIGHT', fontSize: 18, letterSpacing: 4),),
-          shape: StadiumBorder(),
-          highlightColor: Color(0x0083ff),
-          padding: EdgeInsets.all(10),
-          fillColor: Color(0xff5D52D1),
-          splashColor: Color(0xFFFFFFFF),
-
-          onPressed: () {
-            launchScholarURL(scholarURL);
-          },
-        ),
-        new Container(
-          height: 5.0,
-        ),
-
-        new RawMaterialButton(
-          child: const Text('EXAMS', style: TextStyle(color: Colors.white, fontFamily: 'LEMONMILKLIGHT', fontSize: 18, letterSpacing: 4),),
-          shape: StadiumBorder(),
-          highlightColor: Color(0x0083ff),
-          padding: EdgeInsets.all(10),
-          fillColor: Color(0xff5F42CD),
-          splashColor: Color(0xFFFFFFFF),
-
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => DiplomaPage()),
-            );
-          },
-        ),
-        new Container(
-          height: 5.0,
-        ),
-
-
-        new RawMaterialButton(
-          child: const Text('GRADUATION', style: TextStyle(color: Colors.white, fontFamily: 'LEMONMILKLIGHT', fontSize: 18, letterSpacing: 4),),
-          shape: StadiumBorder(),
-          highlightColor: Color(0x0083ff),
-          padding: EdgeInsets.all(10),
-          fillColor: Color(0xff6230C8),
-          splashColor: Color(0xFFFFFFFF),
-
-          onPressed: () {
-            /*Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => gradBeyondP()),
-            );*/
-            launchgradURL(gradURL);
-          },
-        ),
-        new Container(
-          height: 5.0,
-        ),
-
-
-        new RawMaterialButton(
-          child: Text(
-            'POST SECONDARY',
-            style: TextStyle(
-              color: Colors.white,
-              fontFamily: 'LEMONMILKLIGHT',
-              fontSize: 18,
-              letterSpacing: 4,
-            ),
-          ),
-          shape: StadiumBorder(),
-          highlightColor: Color(0x0083ff),
-          padding: EdgeInsets.all(10),
-          fillColor: Color(0xff6521c4),
-          splashColor: Color(0xFFFFFFFF),
-
-          onPressed: () {
-            /*Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => gradBeyondP()),
-            );*/
-            launchpsURL(psURL);
-          },
-        ),
-
-        //Buttons that lead to certain pages or URLS, Each is coloured a certain way to create a gradient from blue to purple
-        //if additional buttons need to be added there are extra colour codes that further complete the gradient
-        //full gradient :
-        //4bc5f2
-        //4DB4ED
-        //50A3E8
-        //5294E4
-        //548CE2
-        //5583DF
-        //567BDD
-        //586ED9
-        //596BD8
-        //5A63D6
-        //5B5AD4
-        //5D52D1
-        //5E4ACF
-        //5F42CD
-        //613ACB
-        //6230C8
-        //6329C6
-        //6521c4
-
-      ],
+      children: returnVal,
     ));
 
   }
@@ -922,56 +603,12 @@ class ThrivePage extends StatelessWidget{  //Thrive Page
 
 class DiplomaPage extends StatelessWidget{   //Built in page for Exam Resources
 
-  Future launchesURL(String esURL) async {
-    if (await canLaunch(esURL)){
-      await launch(esURL, forceSafariVC: true, forceWebView: false);
-    } else {
-      print("cant launch webpage");
-    }
-
-  }
-
-  Future launchadpURL(String adpURL) async {
-    if (await canLaunch(adpURL)){
-      await launch(adpURL, forceSafariVC: true, forceWebView: false);
-    } else {
-      print("cant launch webpage");
-    }
-
-  }
-
-  Future launchfgcURL(String fgcURL) async {
-    if (await canLaunch(fgcURL)){
-      await launch(fgcURL, forceSafariVC: true, forceWebView: false);
-    } else {
-      print("cant launch webpage");
-    }
-
-  }
-
-  Future launchexpcURL(String expcURL) async {
-    if (await canLaunch(expcURL)){
-      await launch(expcURL, forceSafariVC: true, forceWebView: false);
-    } else {
-      print("cant launch webpage");
-    }
-
-  }
-
-  Future launchqappURL(String qappURL) async {
-    if (await canLaunch(qappURL)){
-      await launch(qappURL, forceSafariVC: true, forceWebView: false);
-    } else {
-      print("cant launch webpage");
-    }
-
-  }
 
   @override
   Widget build(BuildContext context) {
-    var dpText = new Text("Exams", style: new TextStyle( fontFamily: 'ROCK', fontSize: 36, color: Colors.white, letterSpacing: 2),);
-    var rt = new Text("Resources:", style: new TextStyle( fontFamily: 'ROCK', fontSize: 24, color: Colors.white, letterSpacing: 2),);
-    var wm = new Text("This page is not final and will be updated next year!", textAlign: TextAlign.center, style: TextStyle(color: Colors.white, fontSize: 10),);
+    //var dpText = ;
+    //var rt = ;
+    //var wm = ;
     return new Material( color: Color(0xff424242), child: Column(
       children: <Widget>[
 
@@ -998,91 +635,65 @@ class DiplomaPage extends StatelessWidget{   //Built in page for Exam Resources
 
         ),
 
-        dpText,
+        new Text(
+          "Exams",
+          style: new TextStyle(
+              fontFamily: 'ROCK',
+              fontSize: 36,
+              color: Colors.white,
+              letterSpacing: 2
+          ),
+        ),
 
         new Container(
           height: 15.0,
 
         ),
 
-        rt,
+        new Text(
+          "Resources:",
+          style: new TextStyle(
+              fontFamily: 'ROCK',
+              fontSize: 24,
+              color: Colors.white,
+              letterSpacing: 2
+          ),
+        ),
 
         new Container(
           height: 10.0,
 
         ),
 
-
-        /*new RawMaterialButton(
-          child: const Text('RTHS EXAM SCHEDULE JAN 2020', textAlign: TextAlign.center, style: TextStyle(color: Colors.white, letterSpacing: 4, fontFamily: 'LEMONMILKLIGHT', fontSize: 14,),),
-          shape: StadiumBorder(),
-          highlightColor: Color(0x0083ff),
-          padding: EdgeInsets.all(10),
+        new ThriveButton(
+          buttonName: 'FINAL GRADE CALCULATOR',
           fillColor: Colors.indigo,
-          splashColor: Color(0xFFFFFFFF),
-
-          onPressed: () {
-            launchesURL(esURL);
-          },
+          onPressed: (){launchURL(fgcURL);},
         ),
+
         new Container(
           height: 2.0,
-
-        ),       UNCOMMENT BUTTON AND UPDATE WITH JAN 2020 EXAM SCHEDULE PDF URL *update esURL in the const section at the top* AS SOON AS IT'S AVAILABLE                              */
-
-        new RawMaterialButton(
-          child: const Text('FINAL GRADE CALCULATOR',textAlign: TextAlign.center, style: TextStyle(color: Colors.white,letterSpacing: 4, fontFamily: 'LEMONMILKLIGHT', fontSize: 14,),),
-          shape: StadiumBorder(),
-          highlightColor: Color(0x0083ff),
-          padding: EdgeInsets.all(10),
-          fillColor: Colors.indigo,
-          splashColor: Color(0xFFFFFFFF),
-
-          onPressed: () {
-            launchfgcURL(fgcURL);
-          },
-        ),
-        new Container(
-          height: 2.0,
-
         ),
 
-        new RawMaterialButton(
-          child: const Text('ALBERTA DIPLOMA PREP COURSES',textAlign: TextAlign.center, style: TextStyle(color: Colors.white,letterSpacing: 4, fontFamily: 'LEMONMILKLIGHT', fontSize: 14,),),
-          shape: StadiumBorder(),
-          highlightColor: Color(0x0083ff),
-          padding: EdgeInsets.all(10),
+        new ThriveButton(
+          buttonName: 'ALBERTA DIPLOMA PREP COURSES',
           fillColor: Colors.indigo,
-          splashColor: Color(0xFFFFFFFF),
-
-          onPressed: () {
-            launchadpURL(adpURL);
-          },
+          onPressed: (){launchURL(adpURL);},
         ),
         new Container(
           height: 5.0,
-
         ),
-
-        new RawMaterialButton(
-          child: const Text('EXAMPLARS AND PRACTICE FROM PREVIOUS DIPLOMAS',textAlign: TextAlign.center, style: TextStyle(color: Colors.white,letterSpacing: 4, fontFamily: 'LEMONMILKLIGHT', fontSize: 14,),),
-          shape: StadiumBorder(),
-          highlightColor: Color(0x0083ff),
-          padding: EdgeInsets.all(10),
+        new ThriveButton(
+          buttonName: 'EXAMPLARS AND PRACTICE FROM PREVIOUS DIPLOMAS',
           fillColor: Colors.indigo,
-          splashColor: Color(0xFFFFFFFF),
-
-          onPressed: () {
-            launchexpcURL(expcURL);
-          },
+          onPressed: (){launchURL(expcURL);},
         ),
 
-
-
-        wm,
-
-
-
+        new Text(
+          "This page is not final and will be updated next year!",
+          textAlign: TextAlign.center,
+          style: TextStyle(color: Colors.white, fontSize: 10),
+        ),
 
       ],
     ),);
@@ -1090,17 +701,6 @@ class DiplomaPage extends StatelessWidget{   //Built in page for Exam Resources
 } //Exam Resources Page
 
 class CtsPage extends StatelessWidget{   //CTS page
-
-
-  Future launchchssURL(String ctsURL) async {
-    if (await canLaunch(ctsURL)){
-      await launch(ctsURL, forceSafariVC: true, forceWebView: false);
-    } else {
-      print("cant launch webpage");
-    }
-
-  }
-
 
   @override
   Widget build(BuildContext context) {
@@ -1165,24 +765,6 @@ class CtsPage extends StatelessWidget{   //CTS page
         ),
         //placeholder images promoting CTS, they can be removed and replaced with more detailed/accurate info next year
 
-        /*new Container(
-          height: 10.0,
-
-        ),
-
-        new RawMaterialButton(
-          child: const Text('cts web link',textAlign: TextAlign.center, style: TextStyle(color: Colors.white,letterSpacing: 4, fontFamily: 'LEMONMILKLIGHT', fontSize: 14,),),
-          shape: StadiumBorder(),
-          highlightColor: Color(0x0083ff),
-          padding: EdgeInsets.all(5),
-          fillColor: Colors.blueAccent,
-          splashColor: Color(0xFFFFFFFF),
-
-          onPressed: () {
-            launchchssURL(ctsURL);
-          },
-        ),    button for a cts web link in the event there is one */
-
         new Container(
           height: 20.0,
 
@@ -1203,27 +785,10 @@ class CtsPage extends StatelessWidget{   //CTS page
 
 class SportsPage extends StatelessWidget{
 
-
-  Future launchchssURL(String chssURL) async {
-    if (await canLaunch(chssURL)){
-      await launch(chssURL, forceSafariVC: true, forceWebView: false);
-    } else {
-      print("cant launch webpage");
-    }
-
-  }
-
-
   @override
   Widget build(BuildContext context) {
-    var assetsImage = new AssetImage('assets/cometslogo.png');
-    var image = new Image(image: assetsImage, alignment: new Alignment(-0.87, -0.87), width: 325,);
-    var sText = new Text("ATHLETICS", style: new TextStyle( fontFamily: 'ROCK', letterSpacing: 6, fontSize: 30, color: Colors.white,),);
-    var rt = new Text("Team Games Schedule:", style: new TextStyle( fontFamily: 'ROCK', fontSize: 20, color: Colors.white, letterSpacing: 2),);
-    var wm = new Text("This page is not final and will be updated next year!", textAlign: TextAlign.center, style: TextStyle(color: Colors.white, fontSize: 10),);
     return new Material( color: Color(0xff424242), child: Column(
       children: <Widget>[
-
 
         new Container(
           height: 30.0,
@@ -1243,7 +808,7 @@ class SportsPage extends StatelessWidget{
         ),
 
 
-        image,
+        new Image(image: new AssetImage('assets/cometslogo.png'), alignment: new Alignment(-0.87, -0.87), width: 325,),
 
         new Container(
           height: 10.0,
@@ -1251,14 +816,14 @@ class SportsPage extends StatelessWidget{
         ),
 
 
-        sText,
+        new Text("ATHLETICS", style: new TextStyle( fontFamily: 'ROCK', letterSpacing: 6, fontSize: 30, color: Colors.white,),),
 
         new Container(
           height: 20.0,
 
         ),
 
-        rt,
+        new Text("Team Games Schedule:", style: new TextStyle( fontFamily: 'ROCK', fontSize: 20, color: Colors.white, letterSpacing: 2),),
 
         new Container(
           height: 10.0,
@@ -1274,7 +839,7 @@ class SportsPage extends StatelessWidget{
           splashColor: Color(0xFFFFFFFF),
 
           onPressed: () {
-            launchchssURL(chssURL);
+            launchURL(chssURL);
           },
         ),
 
@@ -1283,9 +848,7 @@ class SportsPage extends StatelessWidget{
 
         ),
 
-        wm,
-
-
+        new Text("This page is not final and will be updated next year!", textAlign: TextAlign.center, style: TextStyle(color: Colors.white, fontSize: 10),),
 
       ],
     ),);
@@ -1295,21 +858,17 @@ class SportsPage extends StatelessWidget{
 class EventPage extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
-    var assetsImage = new AssetImage('assets/title.png');
-    var image = new Image(image: assetsImage, alignment: new Alignment(-0.87, -0.87),);
-    var titleText = new Text("| Arts | Athletics | CTS | Wellness | ", style: new TextStyle( fontSize: 11, color: Colors.white, fontFamily: 'LEMONMILKLIGHT',letterSpacing: 4, ), textAlign: TextAlign.center,);
-
     return new Container( child: ListView(
       children: <Widget>[
 
 
-        image,
+        new Image(image: new AssetImage('assets/title.png'), alignment: new Alignment(-0.87, -0.87),),
 
         new Container(
           height: 5.0,
         ),
 
-        titleText,
+        new Text("| Arts | Athletics | CTS | Wellness | ", style: new TextStyle(fontSize: 11, color: Colors.white, fontFamily: 'LEMONMILKLIGHT',letterSpacing: 4, ), textAlign: TextAlign.center,),
 
         new Container(
           height: 10.0,
@@ -1337,59 +896,80 @@ class MyApp extends StatelessWidget {
         length: 3,
 
         child: new Scaffold(
-          body: TabBarView(
-            children: [
-              new Container(
-                child: new ThrivePage(),
-                padding: EdgeInsets.all(10),
-                color: Color(0xFF424242),
-              ),
+            body: TabBarView(
+              children: [
+                new Container(
+                  child: new ThrivePage(
+                    buttons: <ThriveButtonData>[
+                      ThriveButtonData('CLUBS',(){launchURL(clubURL);}),
+                      ThriveButtonData('FINE ARTS',(){launchURL(faURL);}),
+                      ThriveButtonData('CTS',(){goToPage(context, CtsPage());}),
+                      ThriveButtonData('SPORTS',(){goToPage(context, SportsPage());}),
+                      ThriveButtonData('THE DOCK',(){launchURL(dockURL);}),
+                      ThriveButtonData('EDVENTURE',(){launchURL(edURL);}),
+                      ThriveButtonData('CONNECT NEWSLETTER',(){launchURL(connectURL);}),
+                      ThriveButtonData('TEACHER CONTACT LIST',(){launchURL(staffURL);}),
+                      ThriveButtonData('CAREER OPPOTUNITY',(){launchURL(coURL);}),
+                      ThriveButtonData('SCHOLARSHIP',(){launchURL(scholarURL);}),
+                      ThriveButtonData('DIPLOMA EXAMS',(){goToPage(context, DiplomaPage());}),
+                      ThriveButtonData('GRADUATION',(){launchURL(gradURL);}),
+                      ThriveButtonData('POSTSECONDARY',(){launchURL(psURL);}),
 
-              new Container(
-                child: new HomePage(),
-                padding: EdgeInsets.all(10),
-                color: Color(0xFF424242),
-              ),
+                    ],
+                    initColor: Colors.lightBlue[300],
+                    finalColor: Colors.purple,
+                  ),
+                  padding: EdgeInsets.all(10),
+                  color: Colors.grey[800],
+                ),
 
-              new Container(
-                child: new EventPage(),
-                padding: EdgeInsets.all(10),
-                color: Color(0xFF424242),
+                new Container(
+                  child: new HomePage(),
+                  padding: EdgeInsets.all(10),
+                  color: Colors.grey[800],
+                ),
 
-              ),
+                new Container(
+                  child: new EventPage(),
+                  padding: EdgeInsets.all(10),
+                  color: Colors.grey[800],
 
-              //containers of the three pages
+                ),
 
-            ],
-          ),
-          bottomNavigationBar: new TabBar( //creates bottom navigation bar
-            tabs: [
-              Tab(
-                child: new NavigationButton(buttonImage: 'assets/thrive.png', buttonTextRef: 'thrive/button'),
-              ),
+                //containers of the three pages
 
-              Tab(
-                child: new NavigationButton(buttonImage: 'assets/home.png', buttonTextRef: 'home/button'),
-              ),
+              ],
+            ),
+            bottomNavigationBar: new TabBar( //creates bottom navigation bar
+              tabs: [
+                Tab(
+                  child: new NavigationButton(buttonImage: 'assets/thrive.png', buttonTextRef: 'thrive/button'),
+                ),
 
-              Tab(
-                child: new NavigationButton(buttonImage: 'assets/event.png', buttonTextRef: 'event/button'),
+                Tab(
+                  child: new NavigationButton(buttonImage: 'assets/home.png', buttonTextRef: 'home/button'),
+                ),
 
-              ),
+                Tab(
+                  child: new NavigationButton(buttonImage: 'assets/event.png', buttonTextRef: 'event/button'),
 
+                ),
 
-            ],
-            //labelColor: Colors.blue,
-            //unselectedLabelColor: Colors.white,
-            indicatorSize: TabBarIndicatorSize.label,
-            labelPadding: EdgeInsets.all(20),
-            indicatorPadding: EdgeInsets.all(6.0),
-            indicatorColor: Colors.white,
-          ),
-          backgroundColor: Color(0xFF2D2D2D), //app background colour
+              ],
+              //labelColor: Colors.blue,
+              //unselectedLabelColor: Colors.white,
+              indicatorSize: TabBarIndicatorSize.label,
+              labelPadding: EdgeInsets.all(20),
+              indicatorPadding: EdgeInsets.all(6.0),
+              indicatorColor: Colors.white,
+            ),
+            backgroundColor: Colors.grey[850]// Color(0xFF2D2D2D), //app background colour
         ),
       ),
       //theme: ThemeData(fontFamily: 'LEMONMILKLIGHT'),
+      theme: ThemeData(textTheme: TextTheme(
+        body1: TextStyle(fontSize: 14,color: Colors.white)
+      )),
     );
   }
 } //Skeleton of the UI
