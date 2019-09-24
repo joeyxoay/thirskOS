@@ -6,13 +6,14 @@ import 'package:http/http.dart' as http;
 import 'package:json_annotation/json_annotation.dart';
 import 'dart:convert';
 import 'package:path_provider/path_provider.dart';
-import 'package:date_format/date_format.dart';
+//import 'package:date_format/date_format.dart';
 import 'dart:async';
 import 'dart:io';
 import 'event_display.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:flutter_linkify/flutter_linkify.dart';// for later use with video links
+//import 'package:flutter_linkify/flutter_linkify.dart';// for later use with video links
 import 'strings/string_definer.dart';
+import 'package:sprintf/sprintf.dart';
 //imported packages etc.
 
 part 'main.g.dart'; // link to generated dart code (ask Roger)
@@ -127,45 +128,57 @@ List<Widget> displayData(WeekMenu displayMenu){
   List<Widget> entryList = new List<Widget>();
   //displayMenu = WeekMenu.directFromJson(jsonRetrieved);
   for(OneDayMenu dayEntry in displayMenu.thisWeeksMenu){
+
+    List<Widget> oneEntryDisplay = new List<Widget>();
+    oneEntryDisplay.add(Text(''));
+    oneEntryDisplay.add(Text(
+      '${dayEntry.menuDate}',
+      style: TextStyle(fontWeight: FontWeight.bold,fontSize: 18, color: Color(0xFFFFFFFF), letterSpacing: 4, fontFamily: 'LEMONMILKLIGHT' ),
+      textAlign: TextAlign.center,
+    ),
+    );
+    void addOneEntry(String entryLabel, String entryName, String cost) {
+      if(entryName != ''){
+        if(cost != '0.00' && cost != ''){
+          oneEntryDisplay.add(Text(
+            // i used replace all to replace the html code for an apostrophe with one so it doesn't look weird
+            sprintf('%s: %s(CAD\$%s)',[entryLabel,entryName.replaceAll('#039;', '\''),cost]),
+            style: TextStyle(fontSize: 14, fontStyle: FontStyle.italic, color: Colors.white),
+            textAlign: TextAlign.center,
+          ),
+          );
+        } else {
+          oneEntryDisplay.add(Text(
+            // i used replace all to replace the html code for an apostrophe with one so it doesn't look weird
+            sprintf('%s: %s',[entryLabel,entryName.replaceAll('#039;', '\'')]),
+            style: TextStyle(fontSize: 14, fontStyle: FontStyle.italic, color: Colors.white),
+            textAlign: TextAlign.center,
+          ),
+          );
+        }
+      }
+    }
+    addOneEntry(getString('lunch/entry/entree'),dayEntry.entree,dayEntry.entreeCost);
+    //TODO:Make custom labels for custom items
+    addOneEntry("Veggie",dayEntry.veggie,dayEntry.veggieCost);
+    addOneEntry("Starch",dayEntry.starch,dayEntry.starchCost);
+    addOneEntry(getString('lunch/entry/soup'),dayEntry.soup,dayEntry.soupCost);
+    addOneEntry(getString('lunch/entry/dessert'),dayEntry.dessert,dayEntry.dessertCost);
+    if(oneEntryDisplay.length == 2){
+      oneEntryDisplay.add(Text(
+        getString('lunch/entry/no_item'),
+        //'Entree: ${dayEntry.entree.replaceAll('#039;', '\'')}(CAD\$${dayEntry.entreeCost})',
+        style: TextStyle(fontSize: 14, fontStyle: FontStyle.italic, color: Colors.white),
+        textAlign: TextAlign.center,
+      )
+      );
+    }
+    oneEntryDisplay.add(Text(""));
+    oneEntryDisplay.add(Text(""));
+
     entryList.add(Container(
       child: Column(
-        children: <Widget>[
-
-          //if text format needs to be modified in the lunch menu for any reason, here's the place to do it
-          Text(""),
-          Text(
-            '${dayEntry.menuDate}',
-            style: TextStyle(fontWeight: FontWeight.bold,fontSize: 18, color: Color(0xFFFFFFFF), letterSpacing: 4, fontFamily: 'LEMONMILKLIGHT' ),
-            textAlign: TextAlign.center,
-          ),
-          Text(
-            // i used replace all to replace the html code for an apostrophe with one so it doesn't look weird
-            'Entree: ${dayEntry.entree.replaceAll('#039;', '\'')}(CAD\$${dayEntry.entreeCost})', style: TextStyle(fontSize: 14, fontStyle: FontStyle.italic, color: Colors.white),
-            textAlign: TextAlign.center,
-          ),
-          Text(
-            dayEntry.starch == '' ? 'No veggie for thee <3' : 'Starch: ${dayEntry.starch.replaceAll('#039;', '\'')}(CAD\$${dayEntry.starchCost})',
-            style: TextStyle(fontSize: 14,fontStyle: FontStyle.italic, color: Colors.white),
-            textAlign: TextAlign.center,
-          ),
-          Text(
-            dayEntry.veggie == '' ? 'No starch for thee <3' : 'Veggie: ${dayEntry.veggie.replaceAll('#039;', '\'')}(CAD\$${dayEntry.veggieCost})',
-            style: TextStyle(fontSize: 14,fontStyle: FontStyle.italic, color: Colors.white),
-            textAlign: TextAlign.center,
-          ),
-          Text(
-            dayEntry.soup == '' ? 'No soup for thee <3' :'Soup: ${dayEntry.soup.replaceAll('#039;', '\'')}(CAD\$${dayEntry.soupCost})',
-            style: TextStyle(fontSize: 14,fontStyle: FontStyle.italic, color: Colors.white),
-            textAlign: TextAlign.center,
-          ),
-          Text(
-            dayEntry.dessert == '' ? 'No dessert for thee <3' :'Dessert: ${dayEntry.dessert.replaceAll('#039;', '\'')}(CAD\$${dayEntry.dessertCost})',
-            style: TextStyle(fontSize: 14,fontStyle: FontStyle.italic, color: Colors.white),
-            textAlign: TextAlign.center,
-          ),
-          Text(""),
-          Text(""),
-        ],
+        children: oneEntryDisplay,
         //crossAxisAlignment: CrossAxisAlignment.start,
       ),
     ));
@@ -250,9 +263,17 @@ class _MenuDisplayState extends State<MenuDisplay> {
               jsonCached = snapshot.data;
               widget.menuCache.writeJson(snapshot.data);
               displayMenu = WeekMenu.directFromJson(snapshot.data);
+              var _displayData = displayData(displayMenu);
               return Column(
                 //crossAxisAlignment: CrossAxisAlignment.start,
-                children: displayData(displayMenu),
+                children: 
+                  _displayData.length != 0 ?
+                  displayData(displayMenu) :
+                  Text(
+                    getString('lunch/no_entry'),
+                    style: new TextStyle( fontSize: 14, color: Colors.white, ),
+                    textAlign: TextAlign.center,
+                  ),
               );
             } else if(snapshot.hasError){
               if(jsonCached == '') {
@@ -276,7 +297,7 @@ class _MenuDisplayState extends State<MenuDisplay> {
             return Column(
               children: <Widget>[
                 CircularProgressIndicator(),
-                Text('Loading...', style: TextStyle(color: Colors.white)),
+                Text(getString('misc/loading'), style: TextStyle(color: Colors.white)),
               ],
               crossAxisAlignment: CrossAxisAlignment.center,
             );
@@ -291,67 +312,33 @@ class _MenuDisplayState extends State<MenuDisplay> {
 }
 
 
+///A button for all your navigation needs. Chris decided he wants to make 3 classes for something with the same functionality
+///for some reason. I helped him by combine three same class into one. Useful if we decide to make more pages.
+class NavigationButton extends StatelessWidget{
+  final String buttonImage;
+  final String buttonTextRef;
 
-
-//EventButton HomeButton and ThriveButton are buttons for the bottom navigation bar
-class EventButton extends StatelessWidget{
+  NavigationButton({Key key, @required this.buttonImage, @required this.buttonTextRef}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    var assetsImage = new AssetImage('assets/event.png');
-    var image = new Image(image: assetsImage, height: 34, width: 34,);
-    var bText = new Text("E V E N T S", style: new TextStyle( fontSize: 10, fontFamily: 'LEMONMILKLIGHT', fontStyle: FontStyle.italic),);
-
     return new Container( child: Column(
       children: <Widget>[
 
-        image,
-        bText,
+        new Image(image: new AssetImage(buttonImage), height: 34, width: 34,),
+        new Text(getString(buttonTextRef),
+          style: new TextStyle(
+              fontSize: 10,
+              fontFamily: 'LEMONMILKLIGHT',
+              letterSpacing: 5,
+              fontStyle: FontStyle.italic
+          ),
+        ),
 
       ],
     ));
 
   }
 }
-
-class HomeButton extends StatelessWidget{
-  @override
-  Widget build(BuildContext context) {
-    var assetsImage = new AssetImage('assets/home.png');
-    var image = new Image(image: assetsImage, height: 34, width: 34,);
-    var bText = new Text("H O M E", style: new TextStyle( fontSize: 10, fontFamily: 'LEMONMILKLIGHT', fontStyle: FontStyle.italic),);
-
-    return new Container( child: Column(
-      children: <Widget>[
-        image,
-        bText,
-
-      ],
-    ));
-
-
-  }
-}
-
-class ThriveButton extends StatelessWidget{
-  @override
-  Widget build(BuildContext context) {
-    var assetsImage = new AssetImage('assets/thrive.png');
-    var image = new Image(image: assetsImage, height: 34, width: 34,);
-    var bText = new Text("T H R I V E", style: new TextStyle( fontSize: 10, fontFamily: 'LEMONMILKLIGHT', fontStyle: FontStyle.italic),);
-
-    return new Container( child: Column(
-      children: <Widget>[
-        image,
-        bText,
-
-      ],
-    ));
-
-
-  }
-}
-//EventButton HomeButton and ThriveButton are buttons for the bottom navigation bar
-
 
 //page displayed on startup
 class HomePage extends StatelessWidget{
@@ -402,7 +389,7 @@ class HomePage extends StatelessWidget{
         ),
 
 
-        //when video announcments are created at thirsk, instead of using a video player there should be a list of links inside a scrollable text box that expands
+        //when video announcements are created at thirsk, instead of using a video player there should be a list of links inside a scrollable text box that expands
         //that list will update with every new link
         //this way it links to youtube or the web so we dont have to worry about or manage the video playback
 
@@ -422,17 +409,6 @@ class HomePage extends StatelessWidget{
         ),
 
         MenuDisplay(menuCache: MenuCache()), //grabs cached lunch menu (ask Roger)
-
-        new Container(
-          height: 5.0,
-        ),
-
-        new Text(
-          getString('lunch/check_back_soon'),
-          style: new TextStyle( fontSize: 14, color: Colors.white, ),
-          textAlign: TextAlign.center,
-        ),
-
 
       ],
     ));
@@ -525,7 +501,7 @@ class CreditPage extends StatelessWidget{  //Development credits page
         new Text(
           getString('credit/2018/credit'),
           textAlign: TextAlign.left,
-          style: TextStyle(color: Colors.white,background: Paint()..color = Colors.blue, fontSize: 14),
+          style: TextStyle(color: Colors.white, fontSize: 14),
 
         ),
       ],
@@ -534,7 +510,7 @@ class CreditPage extends StatelessWidget{  //Development credits page
   }
 } //Dev Credits Page
 
-class ThrivePage extends StatelessWidget{  //Thirve Page
+class ThrivePage extends StatelessWidget{  //Thrive Page
 
   Future launchDockURL(String dockURL) async {
     if (await canLaunch(dockURL)){
@@ -643,21 +619,28 @@ class ThrivePage extends StatelessWidget{  //Thirve Page
   @override
   Widget build(BuildContext context) {
 
-    var assetsImage = new AssetImage('assets/title.png');
-    var image = new Image(image: assetsImage, alignment: new Alignment(-0.87, -0.87),);
-    var titleText = new Text("START THRIVING @ Thirsk!", style: new TextStyle( fontSize: 16, color: Colors.white, fontFamily: 'LEMONMILKLIGHT', letterSpacing: 4, ), textAlign: TextAlign.center,);
-    //variables for images/text
-
     return new Container( child: ListView(
       children: <Widget>[
 
-        image,
+        new Image(
+          image: new AssetImage('assets/title.png'),
+          alignment: new Alignment(-0.87, -0.87),
+        ),
 
         new Container(
           height: 5.0,
         ),
 
-        titleText,
+        new Text(
+          getString('thrive/thrive_prompt'),
+          style: new TextStyle(
+            fontSize: 16,
+            color: Colors.white,
+            fontFamily: 'LEMONMILKLIGHT',
+            letterSpacing: 4,
+          ),
+          textAlign: TextAlign.center,
+        ),
 
         new Container(
           height: 10.0,
@@ -888,10 +871,10 @@ class ThrivePage extends StatelessWidget{  //Thirve Page
           child: Text(
             'POST SECONDARY',
             style: TextStyle(
-                color: Colors.white,
-                fontFamily: 'LEMONMILKLIGHT',
-                fontSize: 18,
-                letterSpacing: 4,
+              color: Colors.white,
+              fontFamily: 'LEMONMILKLIGHT',
+              fontSize: 18,
+              letterSpacing: 4,
             ),
           ),
           shape: StadiumBorder(),
@@ -1121,25 +1104,8 @@ class CtsPage extends StatelessWidget{   //CTS page
 
   @override
   Widget build(BuildContext context) {
-
-    var assetsImageS = new AssetImage('assets/cometslogo.png');
-    var imageS = new Image(image: assetsImageS, alignment: new Alignment(-0.87, -0.87), width: 270,);
-    var assetsImage = new AssetImage('assets/m1.png');
-    var image = new Image(image: assetsImage, alignment: new Alignment(-0.87, -0.87), width: 350,);
-    var sText = new Text("CAREER TECHNOLOGY STUDIES",textAlign: TextAlign.center, style: new TextStyle( fontFamily: 'ROCK', letterSpacing: 6, fontSize: 20, color: Colors.white,),);
-    var rt = new Text("What can you make?",textAlign: TextAlign.center, style: new TextStyle( fontFamily: 'LEMONMILKLIGHT', fontSize: 25, color: Colors.white, letterSpacing: 2),);
-    var rt2 = new Text("What can become of your projects?",textAlign: TextAlign.center, style: new TextStyle( fontFamily: 'LEMONMILKLIGHT', fontSize: 25, color: Colors.white, letterSpacing: 2),);
-    var assetsImage2 = new AssetImage('assets/m2.png');
-    var image2 = new Image(image: assetsImage2, alignment: new Alignment(-0.87, -0.87), width: 350,);
-    var assetsImage3 = new AssetImage('assets/m3.png');
-    var image3 = new Image(image: assetsImage3, alignment: new Alignment(-0.87, -0.87), width: 350,);
-    var wm = new Text("This page is not final and will be updated next year!", textAlign: TextAlign.center, style: TextStyle(color: Colors.white, fontSize: 10),);
-
-
-
     return new Material( color: Color(0xff424242), child: Column(
       children: <Widget>[
-
 
         new Container(
           height: 30.0,
@@ -1158,20 +1124,45 @@ class CtsPage extends StatelessWidget{   //CTS page
           },
         ),
 
-        imageS,
+        new Image(
+          image: new AssetImage('assets/cometslogo.png'),
+          alignment: new Alignment(-0.87, -0.87),
+          width: 270,
+        ),
 
-        sText,
+        new Text(
+          "CAREER TECHNOLOGY STUDIES",
+          textAlign: TextAlign.center,
+          style: new TextStyle(
+            fontFamily: 'ROCK',
+            letterSpacing: 6,
+            fontSize: 20,
+            color: Colors.white,
+          ),
+        ),
 
         new Container(
           height: 10.0,
 
         ),
 
-        image,
+        new Image(
+          image: new AssetImage('assets/m1.png'),
+          alignment: new Alignment(-0.87, -0.87),
+          width: 350,
+        ),
 
-        image2,
+        new Image(
+          image: new AssetImage('assets/m2.png'),
+          alignment: new Alignment(-0.87, -0.87),
+          width: 350,
+        ),
 
-        image3,
+        new Image(
+          image: new AssetImage('assets/m3.png'),
+          alignment: new Alignment(-0.87, -0.87),
+          width: 350,
+        ),
         //placeholder images promoting CTS, they can be removed and replaced with more detailed/accurate info next year
 
         /*new Container(
@@ -1197,7 +1188,11 @@ class CtsPage extends StatelessWidget{   //CTS page
 
         ),
 
-        wm,
+        new Text(
+          "This page is not final and will be updated next year!",
+          textAlign: TextAlign.center,
+          style: TextStyle(color: Colors.white, fontSize: 10),
+        ),
 
 
 
@@ -1370,15 +1365,15 @@ class MyApp extends StatelessWidget {
           bottomNavigationBar: new TabBar( //creates bottom navigation bar
             tabs: [
               Tab(
-                child: new ThriveButton(),
+                child: new NavigationButton(buttonImage: 'assets/thrive.png', buttonTextRef: 'thrive/button'),
               ),
 
               Tab(
-                child: new HomeButton(),
+                child: new NavigationButton(buttonImage: 'assets/home.png', buttonTextRef: 'home/button'),
               ),
 
               Tab(
-                child: new EventButton(),
+                child: new NavigationButton(buttonImage: 'assets/event.png', buttonTextRef: 'event/button'),
 
               ),
 
@@ -1394,6 +1389,7 @@ class MyApp extends StatelessWidget {
           backgroundColor: Color(0xFF2D2D2D), //app background colour
         ),
       ),
+      //theme: ThemeData(fontFamily: 'LEMONMILKLIGHT'),
     );
   }
 } //Skeleton of the UI
