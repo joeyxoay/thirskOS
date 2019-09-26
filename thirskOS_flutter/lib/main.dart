@@ -2,21 +2,20 @@
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:http/http.dart' as http;
-import 'package:json_annotation/json_annotation.dart';
-import 'dart:convert';
-import 'package:path_provider/path_provider.dart';
+//import 'package:http/http.dart' as http;
+//import 'package:json_annotation/json_annotation.dart';
+//import 'dart:convert';
+//import 'package:path_provider/path_provider.dart';
 //import 'package:date_format/date_format.dart';
 import 'dart:async';
-import 'dart:io';
+//import 'dart:io';
 import 'event_display.dart';
 import 'package:url_launcher/url_launcher.dart';
 //import 'package:flutter_linkify/flutter_linkify.dart';// for later use with video links
 import 'strings/string_definer.dart';
-import 'package:sprintf/sprintf.dart';
+import 'menu_display.dart';
+//import 'package:sprintf/sprintf.dart';
 //imported packages etc.
-
-part 'main.g.dart'; // link to generated dart code (ask Roger)
 
 const ctsURL ="";//placeholder for button link for cts page
 
@@ -42,275 +41,11 @@ const qappURL = 'https://questaplus.alberta.ca/PracticeMain.html#';
 // constants that hold all the resource links within thirskOS primarily on the thrive page, this is modular in the sense that it's easy to swap out links
 // and add new ones when needed with little programing knowledge
 
-
-
 ///Don't steal my api key
 const String APP_API_KEY = "AIzaSyCE5gLyCtDW6dzAkPBowBdeXqAy5iw7ebY";
 
 
 void main() => runApp(MyApp());
-
-////////////////////////////////////////////////////////////////////////////
-//This annotation is important for the code generation to generate code for the class
-@JsonSerializable()
-///A class that stores a day's menu
-class OneDayMenu {
-  String menuID;
-  String soup;
-  String soupCost;
-  String entree;
-  String entreeCost;
-  //This annotation can be used if the json key is different from the variable name
-  @JsonKey(name:'starch1')
-  String starch;
-  @JsonKey(name:'starch1Cost')
-  String starchCost;
-  @JsonKey(name:'starch2')
-  String veggie;
-  @JsonKey(name:'starch2Cost')
-  String veggieCost;
-  String dessert;
-  String dessertCost;
-  String menuDate;
-  OneDayMenu({this.menuID,this.soup,this.soupCost,this.entree,this.entreeCost,this.starch,this.starchCost,this.veggie,this.veggieCost,this.dessert,this.dessertCost,this.menuDate});
-
-
-  /// A necessary factory constructor for creating a new User instance
-  /// from a map. Pass the map to the generated `_$UserFromJson` constructor.
-  /// The constructor is named after the source class, in this case User.
-  factory OneDayMenu.fromJson(Map<String, dynamic> json) => _$OneDayMenuFromJson(json);
-  ///Construct a OneDayMenu object directly from json string
-  factory OneDayMenu.directFromJson(String jsonVal){
-    Map tempMap = json.decode(jsonVal);
-    return OneDayMenu.fromJson(tempMap);
-  }
-
-  /// `toJson` is the convention for a class to declare support for serialization
-  /// to JSON. The implementation simply calls the private, generated
-  /// helper method `_$UserToJson`.
-  Map<String, dynamic> toJson() => _$OneDayMenuToJson(this);
-}
-///A class that stores a list of menus, usually a week
-class WeekMenu{
-  List<OneDayMenu> thisWeeksMenu;
-  WeekMenu({this.thisWeeksMenu});
-  //Since the json string is a list, we have to build a new constructor
-  factory WeekMenu.fromJson(List<dynamic> json){
-    List<OneDayMenu> newList = new List<OneDayMenu>();
-    newList = json.map((i)=>OneDayMenu.fromJson(i)).toList();
-    return WeekMenu(thisWeeksMenu: newList);
-  }
-  factory WeekMenu.directFromJson(String jsonVal){
-    List<dynamic> tempMap = json.decode(jsonVal);
-    //print(tempMap);
-    return WeekMenu.fromJson(tempMap);
-  }
-
-}
-///Returns the json string from the site if retrieved successfully.
-///
-Future<String> fetchMenu() async {
-  final response = await http.get('http://rths.ca/rthsJSONmenu.php');
-
-  if (response.statusCode == 200) {
-    // If server returns an OK response, parse the JSON
-    return response.body;
-    //return '[{"menuID":"262","soup":"Cream of Broccoli","soupCost":"2.00","entree":"Steamed Hams\' Sandwich","entreeCost":"5.00","starch1":"","starch1Cost":"0.00","starch2":"","starch2Cost":"0.00","dessert":"Creme Brulee Cake","dessertCost":"2.00","menuDate":"2018-03-12"},{"menuID":"263","soup":"Vegetable Soup","soupCost":"2.00","entree":"Stuffed Peppers (Meat or Quinoa Stuffing) with Garden Salad","entreeCost":"5.00","starch1":"","starch1Cost":"0.00","starch2":"","starch2Cost":"0.00","dessert":"Squares","dessertCost":"0.00","menuDate":"2018-03-13"},{"menuID":"264","soup":"yes :)","soupCost":"2.00","entree":"Beef Burger and\/or Quinoa Burger with Baked Fries or Salad","entreeCost":"5.00","starch1":"","starch1Cost":"0.00","starch2":"","starch2Cost":"0.00","dessert":"Pie Daaayyyyyy!","dessertCost":"2.50","menuDate":"2018-03-14"},{"menuID":"265","soup":"For Sure...","soupCost":"2.00","entree":"Butter Chicken ","entreeCost":"2.00","starch1":"Basmati Rice","starch1Cost":"1.00","starch2":"fresh steamed vegetables","starch2Cost":"1.00","dessert":"Black Forest Cake","dessertCost":"2.50","menuDate":"2018-03-15"}]';
-  } else {
-    // If that response was not OK, throw an error.
-    throw Exception('Failed to load post');
-  }
-}
-
-///Builds the layout for the input [displayMenu]
-///
-List<Widget> displayData(WeekMenu displayMenu){
-  List<Widget> entryList = new List<Widget>();
-  //displayMenu = WeekMenu.directFromJson(jsonRetrieved);
-  for(OneDayMenu dayEntry in displayMenu.thisWeeksMenu){
-
-    List<Widget> oneEntryDisplay = new List<Widget>();
-    oneEntryDisplay.add(Text(''));
-    oneEntryDisplay.add(Text(
-      '${dayEntry.menuDate}',
-      style: TextStyle(fontWeight: FontWeight.bold,fontSize: 18, color: Colors.white, letterSpacing: 4, fontFamily: 'LEMONMILKLIGHT' ),
-      textAlign: TextAlign.center,
-    ),
-    );
-    void addOneEntry(String entryLabel, String entryName, String cost) {
-      if(entryName != ''){
-        if(cost != '0.00' && cost != ''){
-          oneEntryDisplay.add(Text(
-            // i used replace all to replace the html code for an apostrophe with one so it doesn't look weird
-            sprintf('%s: %s(CAD\$%s)',[entryLabel,entryName.replaceAll('#039;', '\''),cost]),
-            style: TextStyle(fontSize: 14, fontStyle: FontStyle.italic, color: Colors.white),
-            textAlign: TextAlign.center,
-          ),
-          );
-        } else {
-          oneEntryDisplay.add(Text(
-            // i used replace all to replace the html code for an apostrophe with one so it doesn't look weird
-            sprintf('%s: %s',[entryLabel,entryName.replaceAll('#039;', '\'')]),
-            style: TextStyle(fontSize: 14, fontStyle: FontStyle.italic, color: Colors.white),
-            textAlign: TextAlign.center,
-          ),
-          );
-        }
-      }
-    }
-    addOneEntry(getString('lunch/entry/entree'),dayEntry.entree,dayEntry.entreeCost);
-    //TODO:Make custom labels for custom items
-    addOneEntry("Veggie",dayEntry.veggie,dayEntry.veggieCost);
-    addOneEntry("Starch",dayEntry.starch,dayEntry.starchCost);
-    addOneEntry(getString('lunch/entry/soup'),dayEntry.soup,dayEntry.soupCost);
-    addOneEntry(getString('lunch/entry/dessert'),dayEntry.dessert,dayEntry.dessertCost);
-    if(oneEntryDisplay.length == 2){
-      oneEntryDisplay.add(Text(
-        getString('lunch/entry/no_item'),
-        //'Entree: ${dayEntry.entree.replaceAll('#039;', '\'')}(CAD\$${dayEntry.entreeCost})',
-        style: TextStyle(fontSize: 14, fontStyle: FontStyle.italic, color: Colors.white),
-        textAlign: TextAlign.center,
-      )
-      );
-    }
-    oneEntryDisplay.add(Text(""));
-    oneEntryDisplay.add(Text(""));
-
-    entryList.add(Container(
-      child: Column(
-        children: oneEntryDisplay,
-        //crossAxisAlignment: CrossAxisAlignment.start,
-      ),
-    ));
-  }
-  return entryList;
-}
-
-///Used to cache data from the site
-class MenuCache {
-  Future<String> get _localPath async {
-    final directory = await getTemporaryDirectory();
-
-    return directory.path;
-  }
-
-  Future<File> get _localFile async {
-    final path = await _localPath;
-    return File('$path/menujson.txt');
-  }
-
-  Future<String> readJson() async {
-    try {
-      final file = await _localFile;
-
-      // Read the file
-      String contents = await file.readAsString();
-
-      return contents;
-    } catch (e) {
-      // If we encounter an error, return 0
-      return '';
-    }
-  }
-  Future<File> writeJson(String strToWrite) async {
-    final file = await _localFile;
-
-    // Write the file
-    return file.writeAsString(strToWrite);
-  }
-}
-
-class MenuDisplay extends StatefulWidget {
-  MenuDisplay({Key key, @required this.menuCache}) : super(key: key);
-  //final String title;
-  final MenuCache menuCache;
-
-  @override
-  _MenuDisplayState createState() => _MenuDisplayState();
-}
-
-class _MenuDisplayState extends State<MenuDisplay> {
-  //int _counter = 0;
-  String jsonRetrieved = '[{"menuID":"262","soup":"Cream of Broccoli","soupCost":"2.00","entree":"Ravioli with 4 Cheese Sauce","entreeCost":"5.00","starch1":"","starch1Cost":"0.00","starch2":"","starch2Cost":"0.00","dessert":"Creme Brulee Cake","dessertCost":"2.00","menuDate":"2018-03-12"},{"menuID":"263","soup":"Vegetable Soup","soupCost":"2.00","entree":"Stuffed Peppers (Meat or Quinoa Stuffing) with Garden Salad","entreeCost":"5.00","starch1":"","starch1Cost":"0.00","starch2":"","starch2Cost":"0.00","dessert":"Squares","dessertCost":"0.00","menuDate":"2018-03-13"},{"menuID":"264","soup":"yes :)","soupCost":"2.00","entree":"Beef Burger and\/or Quinoa Burger with Baked Fries or Salad","entreeCost":"5.00","starch1":"","starch1Cost":"0.00","starch2":"","starch2Cost":"0.00","dessert":"Pie Daaayyyyyy!","dessertCost":"2.50","menuDate":"2018-03-14"},{"menuID":"265","soup":"For Sure...","soupCost":"2.00","entree":"Butter Chicken ","entreeCost":"2.00","starch1":"Basmati Rice","starch1Cost":"1.00","starch2":"fresh steamed vegetables","starch2Cost":"1.00","dessert":"Black Forest Cake","dessertCost":"2.50","menuDate":"2018-03-15"}]';
-  String jsonCached = '';
-  WeekMenu displayMenu;
-  @override
-  ///Stores the cached json into a variable on when initialized
-  void initState() {
-    super.initState();
-    widget.menuCache.readJson().then((String value) {
-      setState(() {
-        jsonCached = value;
-      });
-    });
-  }
-
-
-  @override
-  Widget build(BuildContext context) {
-    // This method is rerun every time setState is called.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-
-    return Container(
-        child: FutureBuilder<String>(
-          future: fetchMenu(),
-          builder: (context,snapshot){
-            if(snapshot.hasData){
-              jsonRetrieved = snapshot.data;
-              jsonCached = snapshot.data;
-              widget.menuCache.writeJson(snapshot.data);
-              displayMenu = WeekMenu.directFromJson(snapshot.data);
-              var _displayData = displayData(displayMenu);
-              return Column(
-                //crossAxisAlignment: CrossAxisAlignment.start,
-                children:
-                _displayData.length != 0 ?
-                displayData(displayMenu) :
-                Text(
-                  getString('lunch/no_entry'),
-                  style: new TextStyle(fontSize: 14, color: Colors.white,),
-                  textAlign: TextAlign.center,
-                ),
-              );
-            } else if(snapshot.hasError){
-              if(jsonCached == '') {
-                return Text('Looks like you has an error:\n${snapshot
-                    .error}\nYou should probably send help.',style: TextStyle(color: Colors.red),);
-              } else {
-                displayMenu = WeekMenu.directFromJson(jsonCached);
-                return ListView(
-                  //crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text('Looks like you has an error:\n${snapshot
-                        .error}\nWe found your latest cache.',style: TextStyle(color: Colors.red),),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: displayData(displayMenu),
-                    ),
-                  ],
-                );
-              }
-            }
-            return Column(
-              children: <Widget>[
-                CircularProgressIndicator(),
-                Text(getString('misc/loading'), style: TextStyle(color: Colors.white)),
-              ],
-              crossAxisAlignment: CrossAxisAlignment.center,
-            );
-          },
-          /*Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: entryList,
-      ),*/
-        )
-    );
-  }
-}
-
 
 ///A button for all your navigation needs. Chris decided he wants to make 3 classes for something with the same functionality
 ///for some reason. I helped him by combine three same class into one. Useful if we decide to make more pages.
@@ -339,7 +74,51 @@ class NavigationButton extends StatelessWidget{
 
   }
 }
+///The button widget for linking to resources in the thrive page.
+class ThriveButton extends StatelessWidget{
 
+  final String buttonName;
+  //final Color highlightColor;
+  final Color fillColor;
+  final Function onPressed;
+
+  ThriveButton({Key key, @required this.buttonName,@required this.fillColor, @required this.onPressed}) : super(key: key);
+  @override
+  Widget build(BuildContext context){
+    return new RawMaterialButton(  //creates button
+      child: Text(buttonName, style: TextStyle(color: Colors.white, fontFamily: 'LEMONMILKLIGHT', fontSize: 18, letterSpacing: 4),),
+      shape: StadiumBorder(), //style & shape of button
+      highlightColor: Color(0x0083ff), //dw about this
+      padding: EdgeInsets.all(10), //space between edge of button and text
+      fillColor: fillColor, //button colour
+      splashColor: Color(0xFFFFFFFF), //colour of button when tapped
+
+      onPressed: onPressed,
+    );
+  }
+}
+///A class to store data for the links to a resource in the thrive page
+class ThriveButtonData{
+  String name;
+  Function clickAction;
+  ThriveButtonData(this.name,this.clickAction);
+}
+///Link to a url. Opens as a web page for some reason.
+Future launchURL(String url) async {
+  if (await canLaunch(url)){
+    await launch(url, forceSafariVC: true, forceWebView: false);
+  } else {
+    print("Fail to launch $url.");
+  }
+
+}
+///A simple command to go to a page in the app.
+void goToPage(BuildContext context,Widget page){
+  Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => page), //goes to built in page when button pressed
+  );
+}
 //page displayed on startup
 class HomePage extends StatelessWidget{
 
@@ -408,7 +187,6 @@ class HomePage extends StatelessWidget{
 } //Home Page
 
 class CreditPage extends StatelessWidget{  //Development credits page
-
 
   @override
   Widget build(BuildContext context) {
@@ -501,51 +279,7 @@ class CreditPage extends StatelessWidget{  //Development credits page
     );
   }
 } //Dev Credits Page
-///The button widget for linking to resources in the thrive page.
-class ThriveButton extends StatelessWidget{
 
-  final String buttonName;
-  //final Color highlightColor;
-  final Color fillColor;
-  final Function onPressed;
-
-  ThriveButton({Key key, @required this.buttonName,@required this.fillColor, @required this.onPressed}) : super(key: key);
-  @override
-  Widget build(BuildContext context){
-    return new RawMaterialButton(  //creates button
-      child: Text(buttonName, style: TextStyle(color: Colors.white, fontFamily: 'LEMONMILKLIGHT', fontSize: 18, letterSpacing: 4),),
-      shape: StadiumBorder(), //style & shape of button
-      highlightColor: Color(0x0083ff), //dw about this
-      padding: EdgeInsets.all(10), //space between edge of button and text
-      fillColor: fillColor, //button colour
-      splashColor: Color(0xFFFFFFFF), //colour of button when tapped
-
-      onPressed: onPressed,
-    );
-  }
-}
-///A class to store data for the links to a resource in the thrive page
-class ThriveButtonData{
-  String name;
-  Function clickAction;
-  ThriveButtonData(this.name,this.clickAction);
-}
-///Link to a url. Opens as a web page for some reason.
-Future launchURL(String url) async {
-  if (await canLaunch(url)){
-    await launch(url, forceSafariVC: true, forceWebView: false);
-  } else {
-    print("Fail to launch $url.");
-  }
-
-}
-///A simple command to go to a page in the app.
-void goToPage(BuildContext context,Widget page){
-  Navigator.push(
-    context,
-    MaterialPageRoute(builder: (context) => page), //goes to built in page when button pressed
-  );
-}
 class ThrivePage extends StatelessWidget{  //Thrive Page
 
   final List<ThriveButtonData> buttons;
