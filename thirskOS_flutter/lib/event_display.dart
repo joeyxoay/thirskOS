@@ -4,12 +4,11 @@ import 'package:http/http.dart' as http;
 import 'package:json_annotation/json_annotation.dart';
 import 'dart:convert';
 //import 'package:path_provider/path_provider.dart';
-import 'package:date_format/date_format.dart';
+//import 'package:date_format/date_format.dart';
 import 'dart:async';
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:url_launcher/url_launcher.dart';
 //import 'dart:io';
-//import "html_parser.dart";
 
 part 'event_display.g.dart';
 

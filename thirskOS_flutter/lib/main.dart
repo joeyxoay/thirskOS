@@ -47,6 +47,23 @@ const String APP_API_KEY = "AIzaSyCE5gLyCtDW6dzAkPBowBdeXqAy5iw7ebY";
 
 void main() => runApp(MyApp());
 
+///Link to a url. Opens as a web page for some reason.
+Future launchURL(String url) async {
+  if (await canLaunch(url)){
+    await launch(url, forceSafariVC: true, forceWebView: false);
+  } else {
+    print("Fail to launch $url.");
+  }
+
+}
+///A simple command to go to a page in the app.
+void goToPage(BuildContext context,Widget page){
+  Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => page), //goes to built in page when button pressed
+  );
+}
+
 ///A button for all your navigation needs. Chris decided he wants to make 3 classes for something with the same functionality
 ///for some reason. I helped him by combine three same class into one. Useful if we decide to make more pages.
 class NavigationButton extends StatelessWidget{
@@ -103,22 +120,7 @@ class ThriveButtonData{
   Function clickAction;
   ThriveButtonData(this.name,this.clickAction);
 }
-///Link to a url. Opens as a web page for some reason.
-Future launchURL(String url) async {
-  if (await canLaunch(url)){
-    await launch(url, forceSafariVC: true, forceWebView: false);
-  } else {
-    print("Fail to launch $url.");
-  }
 
-}
-///A simple command to go to a page in the app.
-void goToPage(BuildContext context,Widget page){
-  Navigator.push(
-    context,
-    MaterialPageRoute(builder: (context) => page), //goes to built in page when button pressed
-  );
-}
 //page displayed on startup
 class HomePage extends StatelessWidget{
 
@@ -251,7 +253,6 @@ class CreditPage extends StatelessWidget{  //Development credits page
 
         new Container(
           height: 20.0,
-
         ),
 
         new Text(
@@ -270,6 +271,27 @@ class CreditPage extends StatelessWidget{  //Development credits page
 
         new Text(
           getString('credit/2018/credit'),
+          textAlign: TextAlign.left,
+          style: TextStyle(color: Colors.white, fontSize: 14),
+
+        ),
+        new Container(height:20.0),
+        new Text(
+          getString('credit/2019/header'),
+          style: new TextStyle(
+              fontFamily: 'ROCK',
+              fontSize: 22,
+              color: Colors.white,
+              letterSpacing: 2),
+        ),
+
+        new Container(
+          height: 3.0,
+
+        ),
+
+        new Text(
+          getString('credit/2019/credit'),
           textAlign: TextAlign.left,
           style: TextStyle(color: Colors.white, fontSize: 14),
 

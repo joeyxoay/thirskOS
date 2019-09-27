@@ -10,6 +10,7 @@ import 'dart:io';
 //import 'package:flutter_linkify/flutter_linkify.dart';// for later use with video links
 import 'strings/string_definer.dart';
 import 'package:sprintf/sprintf.dart';
+import 'package:intl/intl.dart';
 //imported packages etc.
 
 part 'menu_display.g.dart';
@@ -95,8 +96,9 @@ List<Widget> displayData(WeekMenu displayMenu){
 
     List<Widget> oneEntryDisplay = new List<Widget>();
     oneEntryDisplay.add(Text(''));
+    var today=DateTime.parse(dayEntry.menuDate);
     oneEntryDisplay.add(Text(
-      '${dayEntry.menuDate}',
+      '${DateFormat("EEEE, LLL d").format(today)}',
       style: TextStyle(fontWeight: FontWeight.bold,fontSize: 18, color: Colors.white, letterSpacing: 4, fontFamily: 'LEMONMILKLIGHT' ),
       textAlign: TextAlign.center,
     ),

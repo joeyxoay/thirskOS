@@ -10,6 +10,12 @@ DisplayString stringAsset = DisplayString(stringMap:
     'Prototype App Co-Developer: Hasin Zaman\n' +
     'App Co-Developer: Roger Cao\n' +
     'Backend Developer: Dunedin Molnar, Hasin Zaman',
+  'credit/2019/header' : 'Credits(2019~2020):',
+  'credit/2019/credit' :
+    'Creator/Lead App Developer: Roger Cao\n' +
+    'Backend Developer: Umut Emre\n' +
+    'Random Nobodys:\n-Matt Groeneveldt\n-Ava Daly\n-Joey Koay\n-Tom Allwright\n' + ///To get promoted, actually tell me what you're doing
+    'Closed Alpha Testers: No one yet',
 
   'event/button':'EVENTS',
 
