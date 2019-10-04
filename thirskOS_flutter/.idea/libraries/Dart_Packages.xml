@@ -394,6 +394,13 @@
             </list>
           </value>
         </entry>
+        <entry key="sprintf">
+          <value>
+            <list>
+              <option value="F:/flutter/.pub-cache/hosted/pub.dartlang.org/sprintf-4.0.2/lib" />
+            </list>
+          </value>
+        </entry>
         <entry key="stack_trace">
           <value>
             <list>
@@ -541,6 +548,7 @@
       <root url="file://F:/flutter/.pub-cache/hosted/pub.dartlang.org/shelf_web_socket-0.2.3/lib" />
       <root url="file://F:/flutter/.pub-cache/hosted/pub.dartlang.org/source_gen-0.9.4+1/lib" />
       <root url="file://F:/flutter/.pub-cache/hosted/pub.dartlang.org/source_span-1.4.1/lib" />
+      <root url="file://F:/flutter/.pub-cache/hosted/pub.dartlang.org/sprintf-4.0.2/lib" />
       <root url="file://F:/flutter/.pub-cache/hosted/pub.dartlang.org/stack_trace-1.9.3/lib" />
       <root url="file://F:/flutter/.pub-cache/hosted/pub.dartlang.org/stream_channel-1.6.8/lib" />
       <root url="file://F:/flutter/.pub-cache/hosted/pub.dartlang.org/stream_transform-0.0.14+1/lib" />
