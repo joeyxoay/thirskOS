@@ -233,16 +233,18 @@ class _MenuDisplayState extends State<MenuDisplay> {
               return Column(
                 //crossAxisAlignment: CrossAxisAlignment.start,
                 children:
-                _displayData.length != 0 ?
-                displayData(displayMenu) :
-                Text(
-                  getString('lunch/no_entry'),
-                  style: new TextStyle(fontSize: 14, color: Colors.white,),
-                  textAlign: TextAlign.center,
-                ),
+                  _displayData.length != 0 ?
+                  displayData(displayMenu) :
+                  <Widget>[
+                    Text(
+                      getString('lunch/no_entry'),
+                      style: new TextStyle(fontSize: 14, color: Colors.white,),
+                      textAlign: TextAlign.center,
+                    ),
+                  ]
               );
             } else if(snapshot.hasError){
-              if(jsonCached == '') {
+              if(jsonCached == '' || jsonCached == '[]') {
                 return Text('Looks like you has an error:\n${snapshot
                     .error}\nYou should probably send help.',style: TextStyle(color: Colors.red),);
               } else {
