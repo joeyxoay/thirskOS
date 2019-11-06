@@ -54,6 +54,9 @@ class OnePostData
   DateTime get postDateTime{
     return DateFormat("d-M-y (H:m:s)").parseUTC(postDate);
   }
+  String get postDateReadable{
+    return DateFormat("hh:mm:ss aa, MMMM d, yyyy").format(postDateTime.toLocal());
+  }
   Duration timeSincePost([DateTime current]){
     var currentTime = current??DateTime.now().toUtc();
     return currentTime.difference(postDateTime);
@@ -189,9 +192,9 @@ class OneEventPostDetail extends StatelessWidget{
         child: Container(
           child: Column(
             children: <Widget>[
-              new Container(height: 30.0,),
+              Container(height: 30.0,),
 
-              new RawMaterialButton(
+              RawMaterialButton(
                 child: Text(getString('misc/back'), style: TextStyle(color: Colors.white, fontSize: 18,),),
                 shape: StadiumBorder(),
                 highlightColor: Color(0x0083ff),
@@ -204,9 +207,21 @@ class OneEventPostDetail extends StatelessWidget{
                 },
               ),
 
-              new Container(height: 20.0,),
+              Container(height: 20.0,),
 
               Text(postData.title,style: TextStyle(fontSize: 28.0, fontFamily: 'ROCK', color: Colors.white),),
+
+              Container(height: 10.0,),
+
+              Row(
+                children: <Widget>[
+                  Text("by " + postData.name),
+                  Text(postData.postDateReadable),
+                ],
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
+              ),
+
               Linkify(
                 //takes post content searches for links and makes them clickable
                 onOpen: (link) async => launchURL(link.url),
