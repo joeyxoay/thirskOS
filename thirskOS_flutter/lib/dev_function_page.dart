@@ -18,7 +18,7 @@ class MarkdownTest extends StatelessWidget{
             highlightColor: Color(0x0083ff),
             padding: EdgeInsets.all(5),
             fillColor: Colors.black12,
-            splashColor: Color(0xFFFFFFFF),
+            splashColor: Colors.white,
             onPressed: () {
               Navigator.pop(context);
             },
