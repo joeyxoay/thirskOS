@@ -2,18 +2,18 @@
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'event_feed/event_display.dart';
+import 'general_functions.dart';
+import 'strings/string_definer.dart';
+import 'lunch_menu/menu_display.dart';
+import 'dev_function_page.dart';
+//import 'package:flutter_linkify/flutter_linkify.dart';// for later use with video links
 //import 'package:http/http.dart' as http;
 //import 'package:json_annotation/json_annotation.dart';
 //import 'dart:convert';
 //import 'package:path_provider/path_provider.dart';
 //import 'package:date_format/date_format.dart';
-import 'dart:async';
 //import 'dart:io';
-import 'event_display.dart';
-import 'package:url_launcher/url_launcher.dart';
-//import 'package:flutter_linkify/flutter_linkify.dart';// for later use with video links
-import 'strings/string_definer.dart';
-import 'menu_display.dart';
 //import 'package:sprintf/sprintf.dart';
 //imported packages etc.
 
@@ -46,23 +46,6 @@ const String APP_API_KEY = "AIzaSyCE5gLyCtDW6dzAkPBowBdeXqAy5iw7ebY";
 
 
 void main() => runApp(MyApp());
-
-///Link to a url. Opens as a web page for some reason.
-Future launchURL(String url) async {
-  if (await canLaunch(url)){
-    await launch(url, forceSafariVC: true, forceWebView: false);
-  } else {
-    print("Fail to launch $url.");
-  }
-
-}
-///A simple command to go to a page in the app.
-void goToPage(BuildContext context,Widget page){
-  Navigator.push(
-    context,
-    MaterialPageRoute(builder: (context) => page), //goes to built in page when button pressed
-  );
-}
 
 ///A button for all your navigation needs. Chris decided he wants to make 3 classes for something with the same functionality
 ///for some reason. I helped him by combine three same class into one. Useful if we decide to make more pages.
@@ -108,7 +91,7 @@ class ThriveButton extends StatelessWidget{
       highlightColor: Color(0x0083ff), //dw about this
       padding: EdgeInsets.all(10), //space between edge of button and text
       fillColor: fillColor, //button colour
-      splashColor: Color(0xFFFFFFFF), //colour of button when tapped
+      splashColor: Colors.white, //colour of button when tapped
 
       onPressed: onPressed,
     );
@@ -192,7 +175,7 @@ class CreditPage extends StatelessWidget{  //Development credits page
 
   @override
   Widget build(BuildContext context) {
-    return new Material( color: Color(0xff424242), child: Column(
+    return new Material( color: Colors.grey[800], child: Column(
       children: <Widget>[
 
         new Container(
@@ -365,7 +348,7 @@ class DiplomaPage extends StatelessWidget{   //Built in page for Exam Resources
     //var dpText = ;
     //var rt = ;
     //var wm = ;
-    return new Material( color: Color(0xff424242), child: Column(
+    return new Material( color: Colors.grey[800], child: Column(
       children: <Widget>[
 
         new Container(
@@ -460,7 +443,7 @@ class CtsPage extends StatelessWidget{   //CTS page
 
   @override
   Widget build(BuildContext context) {
-    return new Material( color: Color(0xff424242), child: Column(
+    return new Material( color: Colors.grey[800], child: Column(
       children: <Widget>[
 
         new Container(
@@ -543,7 +526,7 @@ class SportsPage extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-    return new Material( color: Color(0xff424242), child: Column(
+    return new Material( color: Colors.grey[800], child: Column(
       children: <Widget>[
 
         new Container(
@@ -647,84 +630,88 @@ class MyApp extends StatelessWidget {
       title: "thirskOS",
       color: Colors.grey,
 
-      home: DefaultTabController(
-        initialIndex: 1,
-        length: 3,
+      home: Builder(
+        builder: (context) => DefaultTabController(
+          initialIndex: 1,
+          length: 3,
 
-        child: new Scaffold(
-            body: TabBarView(
-              children: [
-                new Container(
-                  child: new ThrivePage(
-                    buttons: <ThriveButtonData>[
-                      ThriveButtonData('CLUBS',(){launchURL(clubURL);}),
-                      ThriveButtonData('FINE ARTS',(){launchURL(faURL);}),
-                      ThriveButtonData('CTS',(){goToPage(context, CtsPage());}),
-                      ThriveButtonData('SPORTS',(){goToPage(context, SportsPage());}),
-                      ThriveButtonData('THE DOCK',(){launchURL(dockURL);}),
-                      ThriveButtonData('EDVENTURE',(){launchURL(edURL);}),
-                      ThriveButtonData('CONNECT NEWSLETTER',(){launchURL(connectURL);}),
-                      ThriveButtonData('TEACHER CONTACT LIST',(){launchURL(staffURL);}),
-                      ThriveButtonData('CAREER OPPOTUNITY',(){launchURL(coURL);}),
-                      ThriveButtonData('SCHOLARSHIP',(){launchURL(scholarURL);}),
-                      ThriveButtonData('DIPLOMA EXAMS',(){goToPage(context, DiplomaPage());}),
-                      ThriveButtonData('GRADUATION',(){launchURL(gradURL);}),
-                      ThriveButtonData('POSTSECONDARY',(){launchURL(psURL);}),
+          child: new Scaffold(
+              body: TabBarView(
+                children: [
+                  new Container(
+                    child: new ThrivePage(
+                      buttons: <ThriveButtonData>[
+                        ThriveButtonData('CLUBS',(){launchURL(clubURL);}),
+                        ThriveButtonData('FINE ARTS',(){launchURL(faURL);}),
+                        ThriveButtonData('CTS',(){goToPage(context, CtsPage());}),
+                        ThriveButtonData('SPORTS',(){goToPage(context, SportsPage());}),
+                        ThriveButtonData('THE DOCK',(){launchURL(dockURL);}),
+                        ThriveButtonData('EDVENTURE',(){launchURL(edURL);}),
+                        ThriveButtonData('CONNECT NEWSLETTER',(){launchURL(connectURL);}),
+                        ThriveButtonData('TEACHER CONTACT LIST',(){launchURL(staffURL);}),
+                        ThriveButtonData('CAREER OPPOTUNITY',(){launchURL(coURL);}),
+                        ThriveButtonData('SCHOLARSHIP',(){launchURL(scholarURL);}),
+                        ThriveButtonData('DIPLOMA EXAMS',(){goToPage(context, DiplomaPage());}),
+                        ThriveButtonData('GRADUATION',(){launchURL(gradURL);}),
+                        ThriveButtonData('POSTSECONDARY',(){launchURL(psURL);}),
+                        ThriveButtonData('SECRET OPTIONS',(){goToPage(context, MarkdownTest());}),
 
-                    ],
-                    initColor: Colors.lightBlue[300],
-                    finalColor: Colors.purple,
+                      ],
+                      initColor: Colors.lightBlue[300],
+                      finalColor: Colors.purple,
+                    ),
+                    padding: EdgeInsets.all(10),
+                    color: Colors.grey[800],
                   ),
-                  padding: EdgeInsets.all(10),
-                  color: Colors.grey[800],
-                ),
 
-                new Container(
-                  child: new HomePage(),
-                  padding: EdgeInsets.all(10),
-                  color: Colors.grey[800],
-                ),
+                  new Container(
+                    child: new HomePage(),
+                    padding: EdgeInsets.all(10),
+                    color: Colors.grey[800],
+                  ),
 
-                new Container(
-                  child: new EventPage(),
-                  padding: EdgeInsets.all(10),
-                  color: Colors.grey[800],
+                  new Container(
+                    child: new EventPage(),
+                    padding: EdgeInsets.all(10),
+                    color: Colors.grey[800],
 
-                ),
+                  ),
 
-                //containers of the three pages
+                  //containers of the three pages
 
-              ],
-            ),
-            bottomNavigationBar: new TabBar( //creates bottom navigation bar
-              tabs: [
-                Tab(
-                  child: new NavigationButton(buttonImage: 'assets/thrive.png', buttonTextRef: 'thrive/button'),
-                ),
+                ],
+              ),
+              bottomNavigationBar: new TabBar( //creates bottom navigation bar
+                tabs: [
+                  Tab(
+                    child: new NavigationButton(buttonImage: 'assets/thrive.png', buttonTextRef: 'thrive/button'),
+                  ),
 
-                Tab(
-                  child: new NavigationButton(buttonImage: 'assets/home.png', buttonTextRef: 'home/button'),
-                ),
+                  Tab(
+                    child: new NavigationButton(buttonImage: 'assets/home.png', buttonTextRef: 'home/button'),
+                  ),
 
-                Tab(
-                  child: new NavigationButton(buttonImage: 'assets/event.png', buttonTextRef: 'event/button'),
+                  Tab(
+                    child: new NavigationButton(buttonImage: 'assets/event.png', buttonTextRef: 'event/button'),
 
-                ),
+                  ),
 
-              ],
-              //labelColor: Colors.blue,
-              //unselectedLabelColor: Colors.white,
-              indicatorSize: TabBarIndicatorSize.label,
-              labelPadding: EdgeInsets.all(20),
-              indicatorPadding: EdgeInsets.all(6.0),
-              indicatorColor: Colors.white,
-            ),
-            backgroundColor: Colors.grey[850]// Color(0xFF2D2D2D), //app background colour
+                ],
+                //labelColor: Colors.blue,
+                //unselectedLabelColor: Colors.white,
+                indicatorSize: TabBarIndicatorSize.label,
+                labelPadding: EdgeInsets.all(20),
+                indicatorPadding: EdgeInsets.all(6.0),
+                indicatorColor: Colors.white,
+              ),
+              backgroundColor: Colors.grey[850]// Color(0xFF2D2D2D), //app background colour
+          ),
         ),
       ),
+
       //theme: ThemeData(fontFamily: 'LEMONMILKLIGHT'),
       theme: ThemeData(textTheme: TextTheme(
-        body1: TextStyle(fontSize: 14,color: Colors.white)
+          body1: TextStyle(fontSize: 14,color: Colors.white)
       )),
     );
   }
