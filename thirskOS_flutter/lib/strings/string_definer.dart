@@ -19,6 +19,23 @@ DisplayString stringAsset = DisplayString(stringMap:
 
   'event/button':'EVENTS',
 
+  'event/time/future':'The future is now!',
+  'event/time/years_ago':'%d years ago',
+  'event/time/a_year_ago':'1 year ago',
+  'event/time/months_ago':'%d months ago',
+  'event/time/a_month_ago':'1 month ago',
+  'event/time/weeks_ago':'%d weeks ago',
+  'event/time/a_week_ago':'1 week ago',
+  'event/time/days_ago':'%d days ago',
+  'event/time/a_day_ago':'1 day ago',
+  'event/time/hours_ago':'%d hours ago',
+  'event/time/a_hour_ago':'1 hour ago',
+  'event/time/minutes_ago':'%d minutes ago',
+  'event/time/a_minute_ago':'1 minute ago',
+  'event/time/seconds_ago':'%d seconds ago',
+  'event/time/a_second_ago':'1 second ago',
+  'event/time/now':'Just now',
+
   'home/button':'HOME',
 
   'lunch/entry/entree':'Entree',
