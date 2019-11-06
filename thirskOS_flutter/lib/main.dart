@@ -192,7 +192,7 @@ class CreditPage extends StatelessWidget{  //Development credits page
           highlightColor: Color(0x0083ff),
           padding: EdgeInsets.all(5),
           fillColor: Colors.black12,
-          splashColor: Color(0xFFFFFFFF),
+          splashColor: Colors.white,
           onPressed: () {
             Navigator.pop(context);
           },
@@ -362,7 +362,7 @@ class DiplomaPage extends StatelessWidget{   //Built in page for Exam Resources
           highlightColor: Color(0x0083ff),
           padding: EdgeInsets.all(5),
           fillColor: Colors.black12,
-          splashColor: Color(0xFFFFFFFF),
+          splashColor: Colors.white,
 
           onPressed: () {
             Navigator.pop(context);
@@ -457,7 +457,7 @@ class CtsPage extends StatelessWidget{   //CTS page
           highlightColor: Color(0x0083ff),
           padding: EdgeInsets.all(5),
           fillColor: Colors.black12,
-          splashColor: Color(0xFFFFFFFF),
+          splashColor: Colors.white,
           onPressed: () {
             Navigator.pop(context);
           },
@@ -540,7 +540,7 @@ class SportsPage extends StatelessWidget{
           highlightColor: Color(0x0083ff),
           padding: EdgeInsets.all(5),
           fillColor: Colors.black12,
-          splashColor: Color(0xFFFFFFFF),
+          splashColor: Colors.white,
           onPressed: () {
             Navigator.pop(context);
           },
@@ -575,7 +575,7 @@ class SportsPage extends StatelessWidget{
           highlightColor: Color(0x0083ff),
           padding: EdgeInsets.all(5),
           fillColor: Colors.red.shade900,
-          splashColor: Color(0xFFFFFFFF),
+          splashColor: Colors.white,
 
           onPressed: () {
             launchURL(chssURL);
