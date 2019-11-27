@@ -19,7 +19,9 @@ enum SchoolDayType{
   ///No school for students, but staff needs to attend
   nonInstructional,
   ///No school for both students and staffs
-  noSchool
+  noSchool,
+  ///For thirsk days
+  thirskDay,
 }
 ///The type of duration used in [EventDuration]
 enum DurationType{
@@ -73,10 +75,14 @@ class EventDuration{
   }
 }
 
+///The information for school day for a period of time, such as whether it is a regular day, non-instructional, or a national holiday
 class SchoolDayInformation{
   SchoolDayType schoolDayType;
+  ///Name of this class such as "Victoria Day" or "Christmas Break"
   String title;
+  ///The greeting that should be displayed for this event
   String greeting;
+  ///The duration for this event.
   EventDuration duration;
   SchoolDayInformation({@required this.schoolDayType,@required this.title,this.greeting,@required this.duration});
   bool isUnderDuration(DateTime currentDate){
@@ -88,6 +94,7 @@ class SchoolDayInformation{
 class SchoolCalendar{
   List<SchoolDayInformation> eventLists;
   SchoolCalendar({this.eventLists});
+  ///Get what information does [currentDate] have. Select from the first-most event that falls under the duration.
   SchoolDayInformation getInfo(DateTime currentDate){
     for(var oneEvent in eventLists){
       if(oneEvent.isUnderDuration(currentDate))
@@ -96,6 +103,7 @@ class SchoolCalendar{
     return null;
   }
 }
+///The default calendar for the school. Is currently hard-coded but in the future we might do it server based.
 SchoolCalendar schoolCalendar = new SchoolCalendar(
     eventLists: [
       /*
@@ -226,3 +234,69 @@ SchoolCalendar schoolCalendar = new SchoolCalendar(
       )
     ]
 );
+class DateDisplay extends StatefulWidget{
+  @override
+  State<StatefulWidget> createState() => _DateDisplayState();
+}
+class _DateDisplayState extends State<DateDisplay>{
+
+  @override
+  Widget build(BuildContext context) {
+    var currentDate = DateTime.parse('2019-11-22 09:24:33');//DateTime.now();
+    var todaysInfo = schoolCalendar.getInfo(currentDate);
+    var currentPeriod = "No Class";
+    int timeOfDayToInt(int hour,int minute) => hour * 60 + minute;
+    int datetimeToInt(DateTime time) => timeOfDayToInt(time.hour, time.minute);
+    if(todaysInfo.schoolDayType == SchoolDayType.schoolDay){
+      var periods = [[0,2,1,4,3],[0,1,2,3,4]];
+      bool finished = false;
+      void setCurrentPeriod(int hour, int minute, String text){
+        if(!finished && datetimeToInt(currentDate) < timeOfDayToInt(hour,minute)) {
+          currentPeriod = text + " " +
+              (timeOfDayToInt(hour, minute) - datetimeToInt(currentDate))
+                  .toString() + " minute(s).";
+          finished = true;
+        }
+      }
+      if(currentDate.weekday == 5){
+        setCurrentPeriod(8,30,getString('calendar/schoolday/beginning_of_school'));
+        setCurrentPeriod(9,30,getString('calendar/schoolday/period') + " " + periods[currentDate.weekday % 2][1].toString() + " " + getString('calendar/schoolday/ends_in'));
+        setCurrentPeriod(10,15,getString('calendar/schoolday/connect') + " " + getString('calendar/schoolday/ends_in'));
+        setCurrentPeriod(11,15,getString('calendar/schoolday/period') + " " + periods[currentDate.weekday % 2][2].toString() + " " + getString('calendar/schoolday/ends_in'));
+        setCurrentPeriod(11,35,getString('calendar/schoolday/lunch') + " " + getString('calendar/schoolday/ends_in'));
+        setCurrentPeriod(12,35,getString('calendar/schoolday/period') + " " + periods[currentDate.weekday % 2][3].toString() + " " + getString('calendar/schoolday/ends_in'));
+        setCurrentPeriod(13,35,getString('calendar/schoolday/period') + " " + periods[currentDate.weekday % 2][4].toString() + " " + getString('calendar/schoolday/ends_in'));
+      } else {
+        setCurrentPeriod(8,30,getString('calendar/schoolday/beginning_of_school'));
+        setCurrentPeriod(9,45,getString('calendar/schoolday/period') + " " + periods[currentDate.weekday % 2][1].toString() + " " + getString('calendar/schoolday/ends_in'));
+        setCurrentPeriod(10,35,getString('calendar/schoolday/focus') + " " + getString('calendar/schoolday/ends_in'));
+        setCurrentPeriod(11,50,getString('calendar/schoolday/period') + " " + periods[currentDate.weekday % 2][2].toString() + " " + getString('calendar/schoolday/ends_in'));
+        setCurrentPeriod(12,30,getString('calendar/schoolday/lunch') + " " + getString('calendar/schoolday/ends_in'));
+        setCurrentPeriod(13,45,getString('calendar/schoolday/period') + " " + periods[currentDate.weekday % 2][3].toString() + " " + getString('calendar/schoolday/ends_in'));
+        setCurrentPeriod(15,0,getString('calendar/schoolday/period') + " " + periods[currentDate.weekday % 2][4].toString() + " " + getString('calendar/schoolday/ends_in'));
+      }
+      if(!finished)
+        currentPeriod = getString('calendar/schoolday/end_of_school');
+    }
+    var schoolText = todaysInfo.greeting != null ? Text(todaysInfo.greeting) : null;
+    return Column(
+      children: <Widget>[
+        Text(
+          new DateFormat("| EEEE | MMM d | yyyy |").format(currentDate,),
+          style: new TextStyle(
+              fontSize: 16,
+              color: Colors.white,
+              letterSpacing: 4,
+              fontFamily: 'LEMONMILKLIGHT'
+          ),
+          textAlign: TextAlign.center,
+        ),
+        Text(todaysInfo.title),
+        schoolText,
+        Text(currentPeriod),
+      ]
+      //Remove the null values from the list in this column for safety
+        ..removeWhere((widget) => widget == null),
+    );
+  }
+}

@@ -1,4 +1,4 @@
-#Tue Nov 05 14:44:10 MST 2019
+#Thu Nov 21 13:07:48 MST 2019
 base.0=C\:\\Users\\ragel\\Documents\\GitHub\\thirskOS\\thirskOS_flutter\\build\\app\\intermediates\\transforms\\dexMerger\\debug\\0
 path.0=classes.dex
 renamed.0=classes.dex
