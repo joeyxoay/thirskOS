@@ -2,6 +2,7 @@ import 'string_getter.dart';
 ///The dictionary of string referred to in the app. Helps organize strings
 DisplayString stringAsset = DisplayString(stringMap:
 {
+  'calendar/noninstructional':'Non-instructional Day',
   'calendar/rememberance':'Rememberance Day',
 
   'calendar/schoolday/connect':'Connect',

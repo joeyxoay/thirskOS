@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:http/http.dart' as http;
-import 'package:json_annotation/json_annotation.dart';
-import 'dart:convert';
+import 'package:thirskOS/strings/string_definer.dart';
+//import 'package:http/http.dart' as http;
+//import 'package:json_annotation/json_annotation.dart';
+//import 'dart:convert';
 //import 'package:path_provider/path_provider.dart';
 //import 'package:date_format/date_format.dart';
-import 'dart:async';
-import 'package:flutter_linkify/flutter_linkify.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:thirskOS/general_functions.dart';
-import 'package:thirskOS/strings/string_definer.dart';
-import 'package:sprintf/sprintf.dart';
+//import 'dart:async';
+//import 'package:flutter_linkify/flutter_linkify.dart';
+//import 'package:url_launcher/url_launcher.dart';
+//import 'package:thirskOS/general_functions.dart';
+//import 'package:sprintf/sprintf.dart';
 
 ///The type of school day that affects whether students and staffs attend or not.
 enum SchoolDayType{
@@ -20,7 +20,7 @@ enum SchoolDayType{
   nonInstructional,
   ///No school for both students and staffs
   noSchool,
-  ///For thirsk days
+  ///For Thirsk days
   thirskDay,
 }
 ///The type of duration used in [EventDuration]
@@ -217,7 +217,26 @@ SchoolCalendar schoolCalendar = new SchoolCalendar(
           greeting: getString('calendar/victoria_day/greeting'),
           duration: EventDuration(DurationType.fromTo,DateTime(2020,5,16),DateTime(2020,5,18))
       ),
-      //TODO: Add more events after May 18, 2020.
+      SchoolDayInformation(
+          schoolDayType: SchoolDayType.schoolDay,
+          title: getString('calendar/last_day'),
+          greeting: getString('calendar/last_day/summer_greeting'),
+          duration: EventDuration(DurationType.singleDay,DateTime(2020,6,29))
+      ),
+      SchoolDayInformation(
+          schoolDayType: SchoolDayType.nonInstructional,
+          title: getString('calendar/noninstructional'),
+          greeting: getString('calendar/noninstructional/greeting'),
+          duration: EventDuration(DurationType.singleDay,DateTime(2020,6,30))
+      ),
+      SchoolDayInformation(
+          schoolDayType: SchoolDayType.noSchool,
+          title: getString('calendar/summer_break'),
+          greeting: getString('calendar/summer_break/greeting'),
+          //TODO:Update the end date for summer break as soon as next year's calendar is released.
+          duration: EventDuration(DurationType.fromTo,DateTime(2020,7,1),DateTime(2020,8,30))
+      ),
+
       /*
       * Happens regularly. Just the weekdays and the weekends.
       * */
@@ -242,7 +261,7 @@ class _DateDisplayState extends State<DateDisplay>{
 
   @override
   Widget build(BuildContext context) {
-    var currentDate = DateTime.parse('2019-11-22 09:24:33');//DateTime.now();
+    var currentDate = DateTime.now();
     var todaysInfo = schoolCalendar.getInfo(currentDate);
     var currentPeriod = "No Class";
     int timeOfDayToInt(int hour,int minute) => hour * 60 + minute;
