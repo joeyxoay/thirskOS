@@ -3,7 +3,27 @@ import 'string_getter.dart';
 DisplayString stringAsset = DisplayString(stringMap:
 {
   'calendar/rememberance':'Rememberance Day',
-
+  'calendar/noninstructional':'Non-instructional Day',
+  //Suggestion: have the last day of school for spring break and winter break be different, just cuz the greetings can be more specific
+  'calendar/last_day':'Last Day of School! Have a good winter break! See you in 2020!',
+  'calendar/christmas':'Happy Non-denominational Holiday!',
+  //Have one for Jan 1st?
+  'calendar/resume_class':'First day back :/',
+  'calendar/teachers_convention':'No School - Teacher Convention Day',
+  'calendar/family_day':'No School - Family Day',
+  'calendar/last_day':'Last Day of School! Go enjoy your spring break!',
+  'calendar/noninstructional':'Non-instructional Day',
+  'calendar/spring_break':'No School today either! There is school tomorrow though. Enjoy your last day of spring break.',
+  'calendar/resume_class':'Welcome back to Thirsk! There is school today!',
+  //check this one
+  'calendar/wtf_weekend':'WTF IS THIS SUPPOSED TO BE',
+  //check this one
+  'calendar/good_friday':"No School - Good Friday",
+  'calendar/noninstructional':'Non-instructional Day',
+  'calendar/noninstructional':'Non-instructional Day',
+  'calendar/victoria_day':'No School - Victoria Day',
+  'calendar/':'',
+  
   'calendar/schoolday/connect':'Connect',
   'calendar/schoolday/ends_in':'ends in',
   'calendar/schoolday/end_of_school':'School is over',
