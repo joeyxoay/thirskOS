@@ -2,6 +2,7 @@
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:thirskOS/calendar/calendar.dart';
 import 'event_feed/event_display.dart';
 import 'general_functions.dart';
 import 'strings/string_definer.dart';
@@ -133,6 +134,7 @@ class HomePage extends StatelessWidget{
           height: 5.0,
         ), //these containers act as spacers between pieces of content on the page
 
+        new DateDisplay(),/*
         new Text(
           new DateFormat("| EEEE | MMM d | yyyy |").format(new DateTime.now(),),
           style: new TextStyle(
@@ -142,7 +144,7 @@ class HomePage extends StatelessWidget{
               fontFamily: 'LEMONMILKLIGHT'
           ),
           textAlign: TextAlign.center,
-        ),
+        ),*/
 
 
         //when video announcements are created at thirsk, instead of using a video player there should be a list of links inside a scrollable text box that expands

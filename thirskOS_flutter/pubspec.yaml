@@ -1,5 +1,5 @@
 name: thirskOS
-description: A new Flutter project.
+description: An application developed for Robert Thirsk High School.
 
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
@@ -21,6 +21,7 @@ dependencies:
   path_provider: ^0.4.1
   flutter_linkify: ^2.1.0
   sprintf: ^4.0.0
+  flutter_calendar_carousel: ^1.4.8
   flutter:
     sdk: flutter
 

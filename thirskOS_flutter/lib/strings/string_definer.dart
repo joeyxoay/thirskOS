@@ -2,6 +2,19 @@ import 'string_getter.dart';
 ///The dictionary of string referred to in the app. Helps organize strings
 DisplayString stringAsset = DisplayString(stringMap:
 {
+  'calendar/noninstructional':'Non-instructional Day',
+  'calendar/rememberance':'Rememberance Day',
+
+  'calendar/schoolday/connect':'Connect',
+  'calendar/schoolday/ends_in':'ends in',
+  'calendar/schoolday/end_of_school':'School is over',
+  'calendar/schoolday/focus':'Focus',
+  'calendar/schoolday/lunch':'Lunch',
+  'calendar/schoolday/period':'Period',
+
+  'calendar/view_detail':'View Detail',
+
+
   'credit/app_title' : 'THIRSK OUTER SPACE',
   'credit/version' : 'Closed Alpha: v0.1',
   'credit/2018/header' : 'Credits(2018~2019):',
