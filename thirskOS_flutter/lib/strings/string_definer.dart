@@ -12,6 +12,8 @@ DisplayString stringAsset = DisplayString(stringMap:
   'calendar/schoolday/lunch':'Lunch',
   'calendar/schoolday/period':'Period',
 
+  'calendar/view_detail':'View Detail',
+
 
   'credit/app_title' : 'THIRSK OUTER SPACE',
   'credit/version' : 'Closed Alpha: v0.1',

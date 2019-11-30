@@ -163,6 +163,13 @@
             </list>
           </value>
         </entry>
+        <entry key="flutter_calendar_carousel">
+          <value>
+            <list>
+              <option value="F:/flutter/.pub-cache/hosted/pub.dartlang.org/flutter_calendar_carousel-1.4.9/lib" />
+            </list>
+          </value>
+        </entry>
         <entry key="flutter_linkify">
           <value>
             <list>
@@ -545,6 +552,7 @@
       <root url="file://F:/flutter/.pub-cache/hosted/pub.dartlang.org/dart_style-1.2.3/lib" />
       <root url="file://F:/flutter/.pub-cache/hosted/pub.dartlang.org/date_format-1.0.6/lib" />
       <root url="file://F:/flutter/.pub-cache/hosted/pub.dartlang.org/fixnum-0.10.9/lib" />
+      <root url="file://F:/flutter/.pub-cache/hosted/pub.dartlang.org/flutter_calendar_carousel-1.4.9/lib" />
       <root url="file://F:/flutter/.pub-cache/hosted/pub.dartlang.org/flutter_linkify-2.1.0/lib" />
       <root url="file://F:/flutter/.pub-cache/hosted/pub.dartlang.org/front_end-0.1.9+1/lib" />
       <root url="file://F:/flutter/.pub-cache/hosted/pub.dartlang.org/glob-1.1.7/lib" />
