@@ -1,16 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:thirskOS/strings/string_definer.dart';
-import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart';
-//import 'package:http/http.dart' as http;
-//import 'package:json_annotation/json_annotation.dart';
-//import 'dart:convert';
-//import 'package:path_provider/path_provider.dart';
-//import 'package:date_format/date_format.dart';
-//import 'dart:async';
-//import 'package:flutter_linkify/flutter_linkify.dart';
-//import 'package:url_launcher/url_launcher.dart';
 import 'package:thirskOS/general_functions.dart';
+import 'package:table_calendar/table_calendar.dart';
 //import 'package:sprintf/sprintf.dart';
 
 ///The type of school day that affects whether students and staffs attend or not.
@@ -33,6 +25,8 @@ enum DurationType{
   ///Weekly event. [argument1] provides a List<bool> of size 7, with the i-th specify whether the event apply to this weekday, starting from Monday.
   weekly
 }
+///The name for each day of the week, starting from monday as 1 and sunday as 7
+List<String> weekName = ["","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
 
 ///A class to store a duration of an event. Select a mode and possibly two arguments.
 class EventDuration{
@@ -74,6 +68,52 @@ class EventDuration{
     }
     return false;
   }
+
+  ///Get a list of Dates that falls under the duration. For weekly events,
+  List<DateTime> getListOfDates({DateTime startTime, DateTime endTime}){
+    switch(type){
+      case DurationType.singleDay:
+        return [argument1 as DateTime];
+      case DurationType.fromTo:
+        List<DateTime> dates = new List();
+        for(var i = argument1 as DateTime; !(argument2 as DateTime).isBefore(i); i = i.add(Duration(days: 1))){
+          dates.add(i);
+          print(i);
+        }
+        return dates;
+      case DurationType.weekly:
+        assert(startTime != null && endTime != null);
+        continue defaultCase;
+      defaultCase:
+      default:
+        break;
+    }
+    return [];
+  }
+  @override
+  String toString() {
+    // TODO: implement toString
+    switch(type){
+      case DurationType.singleDay:
+        return "On " + argument1.toString();
+      case DurationType.fromTo:
+        return "From " + argument1.toString() + " To " + argument2.toString();
+      case DurationType.weekly:
+        String returnString = "";
+        List tempList = (argument1 as List<bool>);
+        for(var i = 0; i < tempList.length; i++){
+          if(tempList[i]){
+            if(returnString != ""){
+              returnString += ",";
+            }
+            returnString += weekName[i + 1];
+          }
+        }
+        return returnString == "" ? "Weekly(Unidentified)" : "Every " + returnString;
+      default:
+        return "Warning: Unidentified Duration Type";
+    }
+  }
 }
 
 ///The information for school day for a period of time, such as whether it is a regular day, non-instructional, or a national holiday
@@ -85,16 +125,35 @@ class SchoolDayInformation{
   String greeting;
   ///The duration for this event.
   EventDuration duration;
-  SchoolDayInformation({@required this.schoolDayType,@required this.title,this.greeting,@required this.duration});
+  ///Is the this event ignored when displaying in a calendar
+  bool ignoreInCalendar;
+
+  SchoolDayInformation({@required this.schoolDayType,@required this.title,this.greeting,@required this.duration,this.ignoreInCalendar = false});
   bool isUnderDuration(DateTime currentDate){
     return duration.isUnderDuration(currentDate);
+  }
+  @override
+  String toString() {
+    // TODO: implement toString
+    return title + " (" + duration.toString() + ")";
   }
 }
 
 ///A calendar for a typical school year
 class SchoolCalendar{
+  ///The list of events for a school year
   List<SchoolDayInformation> eventLists;
-  SchoolCalendar({this.eventLists});
+  ///A map that maps the event ID found on [TableCalendar] and the referenced [SchoolDayInformation]
+  //Map<String,SchoolDayInformation> _identifierEventMap;
+  ///A private variable that tracks what id should be assigned to [_identifierEventMap]
+  //int _identifierCount = 0;
+
+  ///Get the private variable [_identifierEventMap]
+  //Map get getIdentifierMap => _identifierEventMap;
+
+  SchoolCalendar({this.eventLists}){
+    //_identifierEventMap = new Map<String,SchoolDayInformation>();
+  }
   ///Get what information does [currentDate] have. Select from the first-most event that falls under the duration.
   SchoolDayInformation getInfo(DateTime currentDate){
     for(var oneEvent in eventLists){
@@ -103,6 +162,23 @@ class SchoolCalendar{
     }
     return null;
   }
+  ///Get the holiday calendar used in [TableCalendar]. Note that the event id, rather than the actual event reference is passed. Might change later
+  Map<DateTime,List> getHolidayCalendar(){
+    Map<DateTime,List> returnVal = new Map<DateTime,List>();
+    for(var oneEvent in eventLists){
+      if(!oneEvent.ignoreInCalendar){
+        for(var i in oneEvent.duration.getListOfDates()){
+          if(!returnVal.containsKey(i)){
+            returnVal[i] = [oneEvent];//["eventid_"+_identifierCount.toString()];
+            //_identifierEventMap["eventid_"+_identifierCount.toString()] = oneEvent;
+            //_identifierCount++;
+          }
+        }
+      }
+    }
+    return returnVal;
+  }
+
 }
 ///The default calendar for the school. Is currently hard-coded but in the future we might do it server based.
 SchoolCalendar schoolCalendar = new SchoolCalendar(
@@ -111,10 +187,10 @@ SchoolCalendar schoolCalendar = new SchoolCalendar(
       * Hard-coded events. Too lazy to add events already passed.
       * */
       SchoolDayInformation(
-        schoolDayType: SchoolDayType.noSchool,
-        title: getString('calendar/rememberance'),
-        greeting: getString('calendar/rememberance/greeting'),
-        duration: EventDuration(DurationType.fromTo,DateTime(2019,11,9),DateTime(2019,11,11))
+          schoolDayType: SchoolDayType.noSchool,
+          title: getString('calendar/rememberance'),
+          greeting: getString('calendar/rememberance/greeting'),
+          duration: EventDuration(DurationType.fromTo,DateTime(2019,11,9),DateTime(2019,11,11))
       ),
       SchoolDayInformation(
           schoolDayType: SchoolDayType.nonInstructional,
@@ -245,15 +321,18 @@ SchoolCalendar schoolCalendar = new SchoolCalendar(
         schoolDayType: SchoolDayType.noSchool,
         title: "Weekend",
         greeting: "Enjoy the weekend!",
-        duration: EventDuration(DurationType.weekly,[false,false,false,false,false,true,true])
+        duration: EventDuration(DurationType.weekly,[false,false,false,false,false,true,true]),
+        ignoreInCalendar: true,
       ),
       SchoolDayInformation(
         schoolDayType: SchoolDayType.schoolDay,
         title: "Regular Class",
-        duration: EventDuration(DurationType.weekly,[true,true,true,true,true,false,false])
+        duration: EventDuration(DurationType.weekly,[true,true,true,true,true,false,false]),
+        ignoreInCalendar: true,
       )
     ]
 );
+///A widget that displays information such as the date of today or which period it is now
 class DateDisplay extends StatefulWidget{
   @override
   State<StatefulWidget> createState() => _DateDisplayState();
@@ -341,11 +420,89 @@ class DetailedCalendar extends StatefulWidget{
 
 class _DetailedCalendar extends State<DetailedCalendar>{
 
-  DateTime _currentDate;
+  //DateTime _currentDate;
+  CalendarController _calendarController;
+  Map<DateTime,List> _holidays;
+  //Map<String, SchoolDayInformation> _eventIdentifier;
+
   @override
   void initState() {
     super.initState();
-    _currentDate = DateTime.now();
+    //_currentDate = DateTime.now();
+    _calendarController = new CalendarController();
+    _holidays = schoolCalendar.getHolidayCalendar();
+    //_eventIdentifier = schoolCalendar.getIdentifierMap;
+    print(_holidays);
+  }
+
+  @override
+  void dispose() {
+    //_animationController.dispose();
+    _calendarController.dispose();
+    super.dispose();
+  }
+  void _onDaySelected(DateTime date, List events){
+    print('Selected ' + date.toString() + ': ');
+    print(events);
+    for(var i in events){
+      print(i.runtimeType);
+      print('Event: ' + i.toString());//_eventIdentifier[i].title);
+    }
+  }
+
+  List<Widget> _getEventMarker(BuildContext context, DateTime date, List events, List holidays){
+    Widget schoolDayMarker;
+    Widget otherEventMarker;
+    for(var i in events){
+      if(i is SchoolDayInformation){
+        Color dotColor;
+        switch(i.schoolDayType){
+          case SchoolDayType.nonInstructional:
+            dotColor = Colors.lightBlueAccent;
+            break;
+          case SchoolDayType.noSchool:
+            dotColor = Colors.red[300];
+            break;
+          case SchoolDayType.schoolDay:
+            dotColor = Colors.grey;
+            break;
+          case SchoolDayType.thirskDay:
+            dotColor = Colors.green[400];
+            break;
+          default:
+
+        }
+        if(dotColor != null) {
+          schoolDayMarker = Container(
+            width: 8.0,
+            height: 8.0,
+            margin: const EdgeInsets.symmetric(horizontal: 0.3),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: dotColor,
+            ),
+          );
+        }
+
+      } else {
+//        otherEventMarker = Container(
+//          width: 8.0,
+//          height: 8.0,
+//          margin: const EdgeInsets.symmetric(horizontal: 0.3),
+//          decoration: BoxDecoration(
+//            shape: BoxShape.circle,
+//            color: Colors.blueAccent[100],
+//          ),
+//          child: Icon(
+//            Icons.add,
+//          ),
+//        );
+      }
+    }
+    //print(schoolDayMarker);
+    return [schoolDayMarker];
+//    return [schoolDayMarker, otherEventMarker]
+//      ..removeWhere((obj) => obj = null);
   }
 
   @override
@@ -378,49 +535,16 @@ class _DetailedCalendar extends State<DetailedCalendar>{
 
             ),
 
-            CalendarCarousel(
-              onDayPressed: (date, events) {
-                this.setState(() => _currentDate = date);
-              },
-              weekendTextStyle: TextStyle(
-                color: Colors.red,
+            TableCalendar(
+              calendarController: _calendarController,
+              events: _holidays,
+              onDaySelected: _onDaySelected,
+              builders: CalendarBuilders(
+                markersBuilder: _getEventMarker
+
               ),
-              thisMonthDayBorderColor: Colors.grey,
-//      weekDays: null, /// for pass null when you do not want to render weekDays
-//      headerText: Container( /// Example for rendering custom header
-//        child: Text('Custom Header'),
-//      ),
-              customDayBuilder: (   /// you can provide your own build function to make custom day containers
-                  bool isSelectable,
-                  int index,
-                  bool isSelectedDay,
-                  bool isToday,
-                  bool isPrevMonthDay,
-                  TextStyle textStyle,
-                  bool isNextMonthDay,
-                  bool isThisMonthDay,
-                  DateTime day,
-                  ) {
-                /// If you return null, [CalendarCarousel] will build container for current [day] with default function.
-                /// This way you can build custom containers for specific days only, leaving rest as default.
+            ),
 
-                // Example: every 15th of month, we have a flight, we can place an icon in the container like that:
-                if (day.day == 15) {
-                  return Center(
-                    child: Icon(Icons.local_airport),
-                  );
-                } else {
-                  return null;
-                }
-              },
-              weekFormat: false,
-              //markedDatesMap: _markedDateMap,
-              //height: 420.0,
-              selectedDateTime: _currentDate,
-              daysHaveCircularBorder: false,
-
-
-            )
           ],
         )
     );
