@@ -6,6 +6,7 @@ class DisplayString{
     if (stringMap.containsKey(identifier)){
       return stringMap[identifier];
     } else{
+      print('Warning: String for "' + identifier + '" is not defined');
       return identifier;
     }
   }

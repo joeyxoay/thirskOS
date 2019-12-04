@@ -1,10 +1,11 @@
 import 'string_getter.dart';
-///The dictionary of string referred to in the app. Helps organize strings
+///The dictionary of string referred to in the app. Helps organize strings.
 DisplayString stringAsset = DisplayString(stringMap:
 {
   'calendar/noninstructional':'Non-instructional Day',
   'calendar/rememberance':'Rememberance Day',
 
+  'calendar/schoolday/beginning_of_school':'School starts in',
   'calendar/schoolday/connect':'Connect',
   'calendar/schoolday/ends_in':'ends in',
   'calendar/schoolday/end_of_school':'School is over',
@@ -25,8 +26,9 @@ DisplayString stringAsset = DisplayString(stringMap:
     'Backend Developer: Dunedin Molnar, Hasin Zaman',
   'credit/2019/header' : 'Credits(2019~2020):',
   'credit/2019/credit' :
-    'Creator/Lead App Developer: Roger Cao\n' +
-    'Backend Developer: Umut Emre\n' +
+    'Lead App Developer: Roger Cao\n' +
+    'Lead Backend Developer: Umut Emre\n' +
+    'Frontend Developers: Danial Baek\n'+
     'Random Nobodys:\n-Matt Groeneveldt\n-Ava Daly\n-Joey Koay\n-Tom Allwright\n' + ///To get promoted, actually tell me what you're doing
     'Closed Alpha Testers: No one yet',
 

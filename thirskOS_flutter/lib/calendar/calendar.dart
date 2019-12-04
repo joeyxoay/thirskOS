@@ -78,7 +78,7 @@ class EventDuration{
         List<DateTime> dates = new List();
         for(var i = argument1 as DateTime; !(argument2 as DateTime).isBefore(i); i = i.add(Duration(days: 1))){
           dates.add(i);
-          print(i);
+          //print(i);
         }
         return dates;
       case DurationType.weekly:
@@ -186,6 +186,42 @@ SchoolCalendar schoolCalendar = new SchoolCalendar(
       /*
       * Hard-coded events. Too lazy to add events already passed.
       * */
+      SchoolDayInformation(
+          schoolDayType: SchoolDayType.noSchool,
+          title: getString('calendar/labour_day'),
+          greeting: getString('calendar/labour_day/greeting'),
+          duration: EventDuration(DurationType.singleDay,DateTime(2019,9,2))
+      ),
+      SchoolDayInformation(
+          schoolDayType: SchoolDayType.schoolDay,
+          title: getString('calendar/resume_class'),
+          greeting: getString('calendar/resume_class/greeting'),
+          duration: EventDuration(DurationType.singleDay,DateTime(2020,9,3))
+      ),
+      SchoolDayInformation(
+          schoolDayType: SchoolDayType.nonInstructional,
+          title: getString('calendar/noninstructional'),
+          greeting: getString('calendar/noninstructional/greeting'),
+          duration: EventDuration(DurationType.singleDay,DateTime(2019,9,20))
+      ),
+      SchoolDayInformation(
+          schoolDayType: SchoolDayType.nonInstructional,
+          title: getString('calendar/noninstructional'),
+          greeting: getString('calendar/noninstructional/greeting'),
+          duration: EventDuration(DurationType.singleDay,DateTime(2019,10,11))
+      ),
+      SchoolDayInformation(
+          schoolDayType: SchoolDayType.noSchool,
+          title: getString('calendar/thanksgiving'),
+          greeting: getString('calendar/thanksgiving/greeting'),
+          duration: EventDuration(DurationType.fromTo,DateTime(2019,10,12),DateTime(2019,10,14))
+      ),
+      SchoolDayInformation(
+          schoolDayType: SchoolDayType.nonInstructional,
+          title: getString('calendar/noninstructional'),
+          greeting: getString('calendar/noninstructional/greeting'),
+          duration: EventDuration(DurationType.singleDay,DateTime(2019,11,1))
+      ),
       SchoolDayInformation(
           schoolDayType: SchoolDayType.noSchool,
           title: getString('calendar/rememberance'),
@@ -311,7 +347,7 @@ SchoolCalendar schoolCalendar = new SchoolCalendar(
           title: getString('calendar/summer_break'),
           greeting: getString('calendar/summer_break/greeting'),
           //TODO:Update the end date for summer break as soon as next year's calendar is released.
-          duration: EventDuration(DurationType.fromTo,DateTime(2020,7,1),DateTime(2020,8,30))
+          duration: EventDuration(DurationType.fromTo,DateTime(2020,7,1),DateTime(2020,8,31))
       ),
 
       /*
@@ -432,7 +468,7 @@ class _DetailedCalendar extends State<DetailedCalendar>{
     _calendarController = new CalendarController();
     _holidays = schoolCalendar.getHolidayCalendar();
     //_eventIdentifier = schoolCalendar.getIdentifierMap;
-    print(_holidays);
+    //print(_holidays);
   }
 
   @override
@@ -444,10 +480,10 @@ class _DetailedCalendar extends State<DetailedCalendar>{
   void _onDaySelected(DateTime date, List events){
     print('Selected ' + date.toString() + ': ');
     print(events);
-    for(var i in events){
-      print(i.runtimeType);
-      print('Event: ' + i.toString());//_eventIdentifier[i].title);
-    }
+//    for(var i in events){
+//      print(i.runtimeType);
+//      print('Event: ' + i.toString());//_eventIdentifier[i].title);
+//    }
   }
 
   List<Widget> _getEventMarker(BuildContext context, DateTime date, List events, List holidays){
@@ -541,8 +577,9 @@ class _DetailedCalendar extends State<DetailedCalendar>{
               onDaySelected: _onDaySelected,
               builders: CalendarBuilders(
                 markersBuilder: _getEventMarker
-
               ),
+              startDay: DateTime(2019,9,1),
+              endDay: DateTime(2020,8,31),
             ),
 
           ],
