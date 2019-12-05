@@ -459,6 +459,7 @@ class _DetailedCalendar extends State<DetailedCalendar>{
   //DateTime _currentDate;
   CalendarController _calendarController;
   Map<DateTime,List> _holidays;
+  Widget _holidayWidget;
   //Map<String, SchoolDayInformation> _eventIdentifier;
 
   @override
@@ -467,6 +468,7 @@ class _DetailedCalendar extends State<DetailedCalendar>{
     //_currentDate = DateTime.now();
     _calendarController = new CalendarController();
     _holidays = schoolCalendar.getHolidayCalendar();
+    _holidayWidget = Container();
     //_eventIdentifier = schoolCalendar.getIdentifierMap;
     //print(_holidays);
   }
@@ -478,17 +480,45 @@ class _DetailedCalendar extends State<DetailedCalendar>{
     super.dispose();
   }
   void _onDaySelected(DateTime date, List events){
-    print('Selected ' + date.toString() + ': ');
-    print(events);
+
 //    for(var i in events){
 //      print(i.runtimeType);
 //      print('Event: ' + i.toString());//_eventIdentifier[i].title);
 //    }
+    setState(() {
+      print('Selected ' + date.toString() + ': ');
+      print(events);
+      if(events.length > 0){
+        for(var i in events){
+          if(i is SchoolDayInformation){
+            _holidayWidget = Container(
+              width: double.infinity,
+              //height: 20.0,
+              decoration: BoxDecoration(
+                color: Colors.grey[700],
+                border: Border.all(width: 2.0, color: Colors.grey[850]),
+                shape: BoxShape.rectangle,
+                borderRadius: BorderRadius.all(Radius.circular(10.0))
+              ),
+              padding: EdgeInsets.all(4.0),
+              margin: EdgeInsets.symmetric(horizontal: 10.0),
+              child: Text(
+                i.title,
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 20.0),
+              ),
+            );
+            return;
+          }
+        }
+      }
+      _holidayWidget = Container();
+    });
   }
 
   List<Widget> _getEventMarker(BuildContext context, DateTime date, List events, List holidays){
     Widget schoolDayMarker;
-    Widget otherEventMarker;
+    //Widget otherEventMarker;
     for(var i in events){
       if(i is SchoolDayInformation){
         Color dotColor;
@@ -576,11 +606,15 @@ class _DetailedCalendar extends State<DetailedCalendar>{
               events: _holidays,
               onDaySelected: _onDaySelected,
               builders: CalendarBuilders(
-                markersBuilder: _getEventMarker
+                  markersBuilder: _getEventMarker
               ),
               startDay: DateTime(2019,9,1),
               endDay: DateTime(2020,8,31),
             ),
+
+            Container(height: 20.0),
+
+            _holidayWidget,
 
           ],
         )

@@ -8,7 +8,7 @@ import 'dart:convert';
 //import 'package:date_format/date_format.dart';
 import 'dart:async';
 import 'package:flutter_linkify/flutter_linkify.dart';
-import 'package:url_launcher/url_launcher.dart';
+//import 'package:url_launcher/url_launcher.dart';
 import 'package:thirskOS/general_functions.dart';
 import 'package:thirskOS/strings/string_definer.dart';
 import 'package:sprintf/sprintf.dart';
@@ -173,6 +173,7 @@ class OneEventPost extends StatelessWidget{
     }
   }
 }
+///The detailed page of a [OneEventPost]
 class OneEventPostDetail extends StatelessWidget{
   final OnePostData postData;
   OneEventPostDetail({Key key, @required this.postData}) : super(key:key);
@@ -236,9 +237,8 @@ class OneEventPostDetail extends StatelessWidget{
     );
   }
 }
-
+///The Event page which contains all the events
 class AllEventPosts extends StatefulWidget{
-
   @override
   State<StatefulWidget> createState() {
 
@@ -269,6 +269,7 @@ class _AllEventPostsState extends State<AllEventPosts>{
             if(snapshot.hasData) {
               //print(snapshot.data);
               //print(LinkParser.getListOfLinks(snapshot.data));
+              convertedData = [];
               for(int i = 0; i < snapshot.data.length; i++){
                 convertedData.add(OneEventPost(postJson: snapshot.data[i]));
               }
@@ -282,7 +283,7 @@ class _AllEventPostsState extends State<AllEventPosts>{
             return Column(
               children: <Widget>[
                 CircularProgressIndicator(),
-                Text('New Posts Coming Soon...', style: TextStyle(color: Colors.white),),
+                Text(getString('misc/loading'), style: TextStyle(color: Colors.white),),
               ],
               crossAxisAlignment: CrossAxisAlignment.center,
             );
