@@ -4,8 +4,42 @@ DisplayString stringAsset = DisplayString(stringMap:
 {
   'calendar/noninstructional':'Non-instructional Day',
   'calendar/rememberance':'Rememberance Day',
+  'calendar/rememberance/greeting':'Put your poppy on, and solute to the soldiers who have fought hard for our country. Lest we forget.',
+  
+  'calendar/noninstructional':'Non-instructional Day',
+  'calendar/noninstructional/greeting':'Enjoy your the day on your bed, you lazy potato',
+  
+  'calendar/last_day':'Last day of school',
+  'calendar/last_day/christmas_greeting':'Last Day of School! Have a good winter break! See you in 2020!',
+  'calendar/last_day/spring_greeting':'Last Day of School! Go enjoy your spring break!',
+  
+  'calendar/christmas':'Happy Non-denominational Holiday!',
+  'calendar/christmas/greeting':'May Santa Claus bring everything you wished for.',
+  
+  //Have one for Jan 1st?
+  
+  'calendar/resume_class':'First day of school',
+  'calendar/resume_class/greeting':'Hope you had a good winter break. Enjoy your last week of Semester 1!',
+  
+  'calendar/teachers_convention':'No School - Teacher Convention Day',
+  'calendar/teachers_convention/greeting':"It's time for the teachers to expand their knowledge",
+  
+  'calendar/family_day':'No School - Family Day',
+  'calendar/family_day/greeting':'Spend some quality time with your family. It is FAMILY day afterall.',
 
   'calendar/schoolday/beginning_of_school':'School starts in',
+  'calendar/spring_break':'Spring Break!',
+  'calendar/spring_break/greeting':'.',
+  'calendar/resume_class':'Welcome back to Thirsk! There is school today!',
+  //check this one
+  'calendar/wtf_weekend':'WTF IS THIS SUPPOSED TO BE',
+  //check this one
+  'calendar/good_friday':"No School - Good Friday",
+  'calendar/noninstructional':'Non-instructional Day',
+  'calendar/noninstructional':'Non-instructional Day',
+  'calendar/victoria_day':'No School - Victoria Day',
+  'calendar/':'',
+
   'calendar/schoolday/connect':'Connect',
   'calendar/schoolday/ends_in':'ends in',
   'calendar/schoolday/end_of_school':'School is over',
