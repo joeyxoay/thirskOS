@@ -6,13 +6,6 @@ part of 'event_display.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-OnePostDate _$OnePostDateFromJson(Map<String, dynamic> json) {
-  return OnePostDate(date: json['date'] as String);
-}
-
-Map<String, dynamic> _$OnePostDateToJson(OnePostDate instance) =>
-    <String, dynamic>{'date': instance.date};
-
 OnePostData _$OnePostDataFromJson(Map<String, dynamic> json) {
   return OnePostData(
       postId: json['Post_id'] as String,
