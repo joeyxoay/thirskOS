@@ -2,44 +2,40 @@ import 'string_getter.dart';
 ///The dictionary of string referred to in the app. Helps organize strings.
 DisplayString stringAsset = DisplayString(stringMap:
 {
-  'calendar/noninstructional':'Non-instructional Day',
-  'calendar/rememberance':'Rememberance Day',
-  'calendar/rememberance/greeting':'Put your poppy on, and solute to the soldiers who have fought hard for our country. Lest we forget.',
-  
-  'calendar/noninstructional':'Non-instructional Day',
-  'calendar/noninstructional/greeting':'Enjoy your the day on your bed, you lazy potato',
-  
+  'calendar/break/spring_break':'Spring Break!',
+  'calendar/break/spring_break/greeting':'.',
+  'calendar/break/summer_break':'Summer Break!',
+  'calendar/break/summer_break/greeting':'',
+  'calendar/break/christmas':'Christmas Break!',
+  'calendar/break/christmas/greeting':'May Santa Claus bring everything you wished for.',
+
+  'calendar/holiday/family_day':'No School - Family Day',
+  'calendar/holiday/family_day/greeting':'Spend some quality time with your family. It is FAMILY day afterall.',
+  'calendar/holiday/good_friday':"Good Friday",
+  'calendar/holiday/good_friday/greeting':'',
+  'calendar/holiday/labour_day':'Labour Day',
+  'calendar/holiday/labour_day/greeting':'',
+  'calendar/holiday/rememberance':'Rememberance Day',
+  'calendar/holiday/rememberance/greeting':'Put your poppy on, and solute to the soldiers who have fought hard for our country. Lest we forget.',
+  'calendar/holiday/teachers_convention':'Teacher\'s Convention',
+  'calendar/holiday/teachers_convention/greeting':"It's time for the teachers to expand their knowledge",
+  'calendar/holiday/thanksgiving':'Thanksgiving',
+  'calendar/holiday/thanksgiving/greeting':'',
+  'calendar/holiday/victoria_day':'No School - Victoria Day',
+  'calendar/holiday/victoria_day/greeting':'',
+
   'calendar/last_day':'Last day of school',
   'calendar/last_day/christmas_greeting':'Last Day of School! Have a good winter break! See you in 2020!',
   'calendar/last_day/spring_greeting':'Last Day of School! Go enjoy your spring break!',
-  
-  'calendar/christmas':'Happy Non-denominational Holiday!',
-  'calendar/christmas/greeting':'May Santa Claus bring everything you wished for.',
-  
-  //Have one for Jan 1st?
-  
+  'calendar/last_day/summer_greeting':'',
+
+  'calendar/noninstructional':'Non-instructional Day',
+  'calendar/noninstructional/greeting':'Enjoy your the day on your bed, you lazy potato',
+
   'calendar/resume_class':'First day of school',
   'calendar/resume_class/greeting':'Hope you had a good winter break. Enjoy your last week of Semester 1!',
-  
-  'calendar/teachers_convention':'No School - Teacher Convention Day',
-  'calendar/teachers_convention/greeting':"It's time for the teachers to expand their knowledge",
-  
-  'calendar/family_day':'No School - Family Day',
-  'calendar/family_day/greeting':'Spend some quality time with your family. It is FAMILY day afterall.',
 
   'calendar/schoolday/beginning_of_school':'School starts in',
-  'calendar/spring_break':'Spring Break!',
-  'calendar/spring_break/greeting':'.',
-  'calendar/resume_class':'Welcome back to Thirsk! There is school today!',
-  //check this one
-  'calendar/wtf_weekend':'WTF IS THIS SUPPOSED TO BE',
-  //check this one
-  'calendar/good_friday':"No School - Good Friday",
-  'calendar/noninstructional':'Non-instructional Day',
-  'calendar/noninstructional':'Non-instructional Day',
-  'calendar/victoria_day':'No School - Victoria Day',
-  'calendar/':'',
-
   'calendar/schoolday/connect':'Connect',
   'calendar/schoolday/ends_in':'ends in',
   'calendar/schoolday/end_of_school':'School is over',
@@ -49,21 +45,20 @@ DisplayString stringAsset = DisplayString(stringMap:
 
   'calendar/view_detail':'View Detail',
 
-
   'credit/app_title' : 'THIRSK OUTER SPACE',
   'credit/version' : 'Closed Alpha: v0.1',
   'credit/2018/header' : 'Credits(2018~2019):',
   'credit/2018/credit' :
-    'Creator/Lead App Developer: Christopher Samra\n' +
-    'Prototype App Co-Developer: Hasin Zaman\n' +
-    'App Co-Developer: Roger Cao\n' +
+    'Creator/Lead App Developer: Christopher Samra\n'
+    'Prototype App Co-Developer: Hasin Zaman\n'
+    'App Co-Developer: Roger Cao\n'
     'Backend Developer: Dunedin Molnar, Hasin Zaman',
   'credit/2019/header' : 'Credits(2019~2020):',
   'credit/2019/credit' :
-    'Lead App Developer: Roger Cao\n' +
-    'Lead Backend Developer: Umut Emre\n' +
-    'Frontend Developers: Danial Baek\n'+
-    'Random Nobodys:\n-Matt Groeneveldt\n-Ava Daly\n-Joey Koay\n-Tom Allwright\n' + ///To get promoted, actually tell me what you're doing
+    'Lead App Developer: Roger Cao\n'
+    'Lead Backend Developer: Umut Emre\n'
+    'Frontend Developers: Danial Baek, Joey Koay\n'
+    'Random Nobodys:\n-Matt Groeneveldt\n-Ava Daly\n-Tom Allwright\n' //To get promoted, actually tell me what you're doing
     'Closed Alpha Testers: No one yet',
 
   'event/button':'EVENTS',
@@ -98,11 +93,20 @@ DisplayString stringAsset = DisplayString(stringMap:
   'misc/back':'Back',
   'misc/loading':'Loading...',
   'misc/test':'test string',
+  'misc/under_construction':'This page is not final and will be updated next year!',
 
   'thrive/button':'THRIVE',
   'thrive/thrive_prompt':'START THRIVING @ Thirsk!',
 
 });
+/// Gets the string from [stringAsset] based on the identifier.
+///
+/// Example:
+/// ```dart
+/// getString('misc/loading'); //Will output 'Loading...' when stringAsset['misc/loading'] == 'Loading'
+/// ```
+///
+/// Prints a warning if there is no entry for the identifier or the entry is blank.
 String getString(String identifier){
   return stringAsset.getString(identifier);
 }
