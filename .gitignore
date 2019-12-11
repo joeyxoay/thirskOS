@@ -3,3 +3,8 @@ thirskOS_flutter/.idea/**
 thirskOS_flutter/android/**
 thirskOS_flutter/build/**
 thirskOS_flutter/ios/**
+thirskos_flutter/.dart_tool/**
+thirskos_flutter/.idea/**
+thirskos_flutter/android/**
+thirskos_flutter/build/**
+thirskos_flutter/ios/**
