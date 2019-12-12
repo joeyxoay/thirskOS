@@ -18,7 +18,7 @@ DisplayString stringAsset = DisplayString(stringMap:
   //Have one for Jan 1st?
   
   'calendar/resume_class':'First day of school',
-  'calendar/resume_class/greeting':'Hope you had a good winter break. Enjoy your last week of Semester 1!',
+  'calendar/resume_class/greeting':'Welcome back to Robert Thirsk High School!',
   
   'calendar/teachers_convention':'No School - Teacher Convention Day',
   'calendar/teachers_convention/greeting':"It's time for the teachers to expand their knowledge",
@@ -27,16 +27,13 @@ DisplayString stringAsset = DisplayString(stringMap:
   'calendar/family_day/greeting':'Spend some quality time with your family. It is FAMILY day afterall.'
 
   'calendar/spring_break':'Spring Break!'
-  'calendar/spring_break/greeting':'.',
-  'calendar/resume_class':'Welcome back to Thirsk! There is school today!',
-  //check this one
-  'calendar/wtf_weekend':'WTF IS THIS SUPPOSED TO BE',
-  //check this one
+  'calendar/spring_break/greeting':'Put some rainboots on and roam free in the world!',
+
   'calendar/good_friday':"No School - Good Friday",
-  'calendar/noninstructional':'Non-instructional Day',
-  'calendar/noninstructional':'Non-instructional Day',
+  'calendar/good_friday/greeting':"No School - Good Friday",
+  
   'calendar/victoria_day':'No School - Victoria Day',
-  'calendar/':'',
+  'calendar/victorua_day/greeting':'We get the day off thanks to Queen Victoria!',
   
   'calendar/schoolday/connect':'Connect',
   'calendar/schoolday/ends_in':'ends in',
