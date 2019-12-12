@@ -131,9 +131,12 @@ class ScheduleEntry{
   final TimeOfDay startTime;
   /// When the current period ends. Must be after [startTime].
   final TimeOfDay endTime;
-  /// The name of the schedule, such as "Focus"
+  /// The name of the schedule, such as "Focus".
   final String title;
-  ScheduleEntry(this.title,this.startTime,this.endTime) {
+  /// The alternative name of the schedule. This title is used instead of [title] when
+  /// [SchoolDaySchedule.alternativeCondition]
+  final String alternativeTitle;
+  ScheduleEntry(this.startTime,this.endTime,this.title,[this.alternativeTitle]) {
     if(timeOfDayDifference(startTime, endTime) >= 0)
       throw ArgumentError("startTime must be earlier than endTime");
   }
@@ -141,7 +144,7 @@ class ScheduleEntry{
     return timeOfDayDifference(startTime, now) <= 0 && timeOfDayDifference(now, endTime) <= 0;
   }
 }
-/// Condition checking logic based on a [DateTime]
+/// Condition checking logic based on a [DateTime].
 typedef DateTimeCondition = bool Function(DateTime a);
 /// A schedule of the a day of school.
 class SchoolDaySchedule{
@@ -149,13 +152,13 @@ class SchoolDaySchedule{
   /// 
   /// This schedule should be valid, according to [checkValidSchedule].
   List<ScheduleEntry> schedule;
-  /// An alternative schedule of the current type, if [alternativeCondition] is true.
-  ///
-  /// This schedule should be valid, according to [checkValidSchedule].
-  /// 
-  /// If null, then there is no alternative schedule. Only [schedule] will be used and [alternativeCondition] is useless.
-  List<ScheduleEntry> alternativeSchedule;
-  /// If this is true, then [alternativeSchedule] should be used instead.
+//  /// An alternative schedule of the current type, if [alternativeCondition] is true.
+//  ///
+//  /// This schedule should be valid, according to [checkValidSchedule].
+//  ///
+//  /// If null, then there is no alternative schedule. Only [schedule] will be used and [alternativeCondition] is useless.
+//  List<ScheduleEntry> alternativeSchedule;
+  /// If this is true, then [ScheduleEntry.alternativeTitle] should be used instead.
   ///
   /// If null, then [defaultAlternateCondition] is used.
   DateTimeCondition alternativeCondition;
@@ -184,28 +187,27 @@ class SchoolDaySchedule{
   }
   SchoolDaySchedule({
     @required this.schedule,
-    this.alternativeSchedule,
+    //this.alternativeSchedule,
     this.alternativeCondition
   }) {
     if(!checkValidSchedule(schedule))
       throw ArgumentError("schedule must be valid(see documentation on checkValidSchedule)");
-    if((alternativeSchedule != null && !checkValidSchedule(alternativeSchedule))){
-      throw ArgumentError("schedule must be valid(see documentation on checkValidSchedule)");
-    }
+    //if((alternativeSchedule != null && !checkValidSchedule(alternativeSchedule)))
+    //  throw ArgumentError("schedule must be valid(see documentation on checkValidSchedule)");
   }
 
-  /// Get the schedule that [now] applies to.
-  ///
-  /// If [alternativeCondition] ([now]) is true, then [alternativeSchedule] is returned,
-  /// otherwise [schedule] is returned.
-  List<ScheduleEntry> getSchedule(DateTime now){
-    if(alternativeSchedule == null)
-      return schedule;
-    return (alternativeCondition ?? defaultAlternateCondition)(now) ? alternativeSchedule : schedule;
-  }
+//  /// Get the schedule that [now] applies to.
+//  ///
+//  /// If [alternativeCondition] ([now]) is true, then [alternativeSchedule] is returned,
+//  /// otherwise [schedule] is returned.
+//  List<ScheduleEntry> getSchedule(DateTime now){
+//    if(alternativeSchedule == null)
+//      return schedule;
+//    return (alternativeCondition ?? defaultAlternateCondition)(now) ? alternativeSchedule : schedule;
+//  }
   /// Get the index of the current period in the schedule based on [now].
   ///
-  /// Precondition: [getSchedule] is valid.
+  /// Precondition: [schedule] is valid.
   /// The validity of a schedule is specified under [checkValidSchedule].
   ///
   /// Returns 0 ~ (n - 1) if [now] falls under a [ScheduleEntry];
@@ -213,19 +215,19 @@ class SchoolDaySchedule{
   /// Returns [afterSchool] if [now] is after all [ScheduleEntry];
   /// Return [duringEmptyPeriod] if [now] does not fall under any of the above cases.
   int getCurrentPeriod(DateTime now){
-    var selectedSchedule = getSchedule(now);
-    assert(checkValidSchedule(selectedSchedule));
+    //var selectedSchedule = getSchedule(now);
+    //assert(checkValidSchedule(selectedSchedule));
     var currentTimeOfDay = TimeOfDay.fromDateTime(now);
-    for(var i = 0; i < selectedSchedule.length; i++){
+    for(var i = 0; i < schedule.length; i++){
       // Check if the current time is before next period's start time. If true, then there is a break or school haven't started yet.
-      if(timeOfDayDifference(currentTimeOfDay, selectedSchedule[i].startTime) < 0){
+      if(timeOfDayDifference(currentTimeOfDay, schedule[i].startTime) < 0){
         if(i == 0){
           return beforeSchool;
         } else {
           return duringEmptyPeriod;
         }
       }
-      if(selectedSchedule[i].isUnderDuration(currentTimeOfDay))
+      if(schedule[i].isUnderDuration(currentTimeOfDay))
         return i;
     }
     return afterSchool;
@@ -233,7 +235,82 @@ class SchoolDaySchedule{
 }
 
 class SchoolDaySchedules{
-
+  static SchoolDaySchedule defaultSchedule = SchoolDaySchedule(
+    schedule: <ScheduleEntry>[
+      ScheduleEntry(
+        TimeOfDay(hour: 8, minute: 30),
+        TimeOfDay(hour: 9, minute: 45),
+        getString('calendar/schoolday/period') + " 1",
+        getString('calendar/schoolday/period') + " 2",
+      ),
+      ScheduleEntry(
+        TimeOfDay(hour: 9, minute: 45),
+        TimeOfDay(hour: 10, minute: 35),
+        getString('calendar/schoolday/focus'),
+      ),
+      ScheduleEntry(
+        TimeOfDay(hour: 10, minute: 35),
+        TimeOfDay(hour: 11, minute: 50),
+        getString('calendar/schoolday/period') + " 2",
+        getString('calendar/schoolday/period') + " 1",
+      ),
+      ScheduleEntry(
+        TimeOfDay(hour: 11, minute: 50),
+        TimeOfDay(hour: 12, minute: 30),
+        getString('calendar/schoolday/lunch'),
+      ),
+      ScheduleEntry(
+        TimeOfDay(hour: 12, minute: 30),
+        TimeOfDay(hour: 13, minute: 45),
+        getString('calendar/schoolday/period') + " 3",
+        getString('calendar/schoolday/period') + " 4",
+      ),
+      ScheduleEntry(
+        TimeOfDay(hour: 13, minute: 45),
+        TimeOfDay(hour: 15, minute: 0),
+        getString('calendar/schoolday/period') + " 4",
+        getString('calendar/schoolday/period') + " 3",
+      ),
+    ],
+  );
+  static SchoolDaySchedule fridaySchedule = SchoolDaySchedule(
+    schedule: <ScheduleEntry>[
+      ScheduleEntry(
+        TimeOfDay(hour: 8, minute: 30),
+        TimeOfDay(hour: 9, minute: 30),
+        getString('calendar/schoolday/period') + " 1",
+        getString('calendar/schoolday/period') + " 2",
+      ),
+      ScheduleEntry(
+        TimeOfDay(hour: 9, minute: 30),
+        TimeOfDay(hour: 10, minute: 15),
+        getString('calendar/schoolday/connect'),
+      ),
+      ScheduleEntry(
+        TimeOfDay(hour: 10, minute: 15),
+        TimeOfDay(hour: 11, minute: 15),
+        getString('calendar/schoolday/period') + " 2",
+        getString('calendar/schoolday/period') + " 1",
+      ),
+      ScheduleEntry(
+        TimeOfDay(hour: 11, minute: 15),
+        TimeOfDay(hour: 11, minute: 35),
+        getString('calendar/schoolday/lunch'),
+      ),
+      ScheduleEntry(
+        TimeOfDay(hour: 11, minute: 35),
+        TimeOfDay(hour: 12, minute: 35),
+        getString('calendar/schoolday/period') + " 3",
+        getString('calendar/schoolday/period') + " 4",
+      ),
+      ScheduleEntry(
+        TimeOfDay(hour: 12, minute: 35),
+        TimeOfDay(hour: 13, minute: 35),
+        getString('calendar/schoolday/period') + " 4",
+        getString('calendar/schoolday/period') + " 3",
+      ),
+    ],
+  );
 }
 
 /// The information for school day for a period of time, such as whether it is a regular day, non-instructional, or a national holiday
@@ -579,7 +656,7 @@ class _DateDisplayState extends State<DateDisplay>{
     );
   }
 }
-
+/// Displays a detailed calendar which contains more information on the upcoming holidays, events, etc.
 class DetailedCalendar extends StatefulWidget{
   @override
   State<StatefulWidget> createState() => _DetailedCalendar();
@@ -626,10 +703,10 @@ class _DetailedCalendar extends State<DetailedCalendar>{
               width: double.infinity,
               //height: 20.0,
               decoration: BoxDecoration(
-                color: Colors.grey[700],
-                border: Border.all(width: 2.0, color: Colors.grey[850]),
-                shape: BoxShape.rectangle,
-                borderRadius: BorderRadius.all(Radius.circular(10.0))
+                  color: Colors.grey[700],
+                  border: Border.all(width: 2.0, color: Colors.grey[850]),
+                  shape: BoxShape.rectangle,
+                  borderRadius: BorderRadius.all(Radius.circular(10.0))
               ),
               padding: EdgeInsets.all(4.0),
               margin: EdgeInsets.symmetric(horizontal: 10.0),
