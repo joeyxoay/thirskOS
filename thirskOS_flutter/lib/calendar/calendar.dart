@@ -13,8 +13,6 @@ enum SchoolDayType{
   nonInstructional,
   ///No school for both students and staffs
   noSchool,
-  ///For Thirsk days
-  thirskDay,
 }
 ///The type of duration used in [EventDuration]
 enum DurationType{
@@ -37,28 +35,28 @@ List<String> weekName = ["","Monday","Tuesday","Wednesday","Thursday","Friday","
 /// EventDuration(DurationType.weekly, [false,true,false,false,false,false,false]); // Every Tuesday
 /// ```
 class EventDuration{
-  DurationType type;
-  dynamic argument1;
-  dynamic argument2;
+  final DurationType type;
+  final dynamic argument1;
+  final dynamic argument2;
 
   ///Initialization of this class requires validation. Depending on the type, a different amount of arguments are required.
-  EventDuration(DurationType type, [dynamic argument1, dynamic argument2]){
+  EventDuration(this. type, [this.argument1, this.argument2]){
     switch(type){
       case DurationType.fromTo:
-        assert(argument1 is DateTime && argument2 is DateTime && (argument1).isBefore(argument2));
+        if(!(argument1 is DateTime && argument2 is DateTime && (argument1).isBefore(argument2)))
+          throw ArgumentError("Type=fromTo: argument1 and argument2 must both be DateTime, and argument1 must be before argument2");
         break;
       case DurationType.singleDay:
-        assert(argument1 is DateTime);
+        if(!(argument1 is DateTime))
+          throw ArgumentError("Type=singleDay: argument1 must be DateTime");
         break;
       case DurationType.weekly:
-        assert(argument1 is List<bool>);
+        if(!(argument1 is List<bool>))
+          throw ArgumentError("Type=weekly: argument1 must be List<bool>");
         break;
       default:
-        throw FormatException("Invalid type");
+        throw ArgumentError("Invalid type");
     }
-    this.type = type;
-    this.argument1 = argument1;
-    this.argument2 = argument2;
   }
 
   /// Check if [currentDate] is under this duration.
@@ -93,7 +91,9 @@ class EventDuration{
         }
         return dates;
       case DurationType.weekly:
-        assert(startTime != null && endTime != null);
+        if(startTime == null || endTime == null)
+          throw ArgumentError("Type=weekly: startTime and endTime must be specified");
+        //TODO: add logic to the return value when type=weekly
         continue defaultCase;
       defaultCase:
       default:
@@ -125,6 +125,116 @@ class EventDuration{
     }
   }
 }
+/// An entry of a [SchoolDaySchedule], such as focus period or Period 1.
+class ScheduleEntry{
+  /// When the current period starts. Must be before [endTime].
+  final TimeOfDay startTime;
+  /// When the current period ends. Must be after [startTime].
+  final TimeOfDay endTime;
+  /// The name of the schedule, such as "Focus"
+  final String title;
+  ScheduleEntry(this.title,this.startTime,this.endTime) {
+    if(timeOfDayDifference(startTime, endTime) >= 0)
+      throw ArgumentError("startTime must be earlier than endTime");
+  }
+  bool isUnderDuration(TimeOfDay now){
+    return timeOfDayDifference(startTime, now) <= 0 && timeOfDayDifference(now, endTime) <= 0;
+  }
+}
+/// Condition checking logic based on a [DateTime]
+typedef DateTimeCondition = bool Function(DateTime a);
+/// A schedule of the a day of school.
+class SchoolDaySchedule{
+  /// The default schedule of the current type of schedule.
+  /// 
+  /// This schedule should be valid, according to [checkValidSchedule].
+  List<ScheduleEntry> schedule;
+  /// An alternative schedule of the current type, if [alternativeCondition] is true.
+  ///
+  /// This schedule should be valid, according to [checkValidSchedule].
+  /// 
+  /// If null, then there is no alternative schedule. Only [schedule] will be used and [alternativeCondition] is useless.
+  List<ScheduleEntry> alternativeSchedule;
+  /// If this is true, then [alternativeSchedule] should be used instead.
+  ///
+  /// If null, then [defaultAlternateCondition] is used.
+  DateTimeCondition alternativeCondition;
+
+  static const int beforeSchool = -1;
+  static const int duringEmptyPeriod = -2;
+  static const int afterSchool = -3;
+
+  /// The default [alternativeCondition] that is used.
+  /// 
+  /// Returns true when [a] is on an even day such as a Tuesday.
+  static bool defaultAlternateCondition(DateTime a){
+    return a.weekday % 2 == 0;
+  }
+  /// Check if [schedule] is valid.
+  ///
+  /// A valid schedule is in order, i.e. [ScheduleEntry.startTime] of a later entry
+  /// should be later than or equal to [ScheduleEntry.endTime] of the current entry.
+  bool checkValidSchedule(List<ScheduleEntry> schedule){
+    for(int i = 0; i < schedule.length - 1; i++){
+      if(timeOfDayDifference(schedule[i].endTime,schedule[i + 1].startTime) > 0){
+        return false;
+      }
+    }
+    return true;
+  }
+  SchoolDaySchedule({
+    @required this.schedule,
+    this.alternativeSchedule,
+    this.alternativeCondition
+  }) {
+    if(!checkValidSchedule(schedule))
+      throw ArgumentError("schedule must be valid(see documentation on checkValidSchedule)");
+    if((alternativeSchedule != null && !checkValidSchedule(alternativeSchedule))){
+      throw ArgumentError("schedule must be valid(see documentation on checkValidSchedule)");
+    }
+  }
+
+  /// Get the schedule that [now] applies to.
+  ///
+  /// If [alternativeCondition] ([now]) is true, then [alternativeSchedule] is returned,
+  /// otherwise [schedule] is returned.
+  List<ScheduleEntry> getSchedule(DateTime now){
+    if(alternativeSchedule == null)
+      return schedule;
+    return (alternativeCondition ?? defaultAlternateCondition)(now) ? alternativeSchedule : schedule;
+  }
+  /// Get the index of the current period in the schedule based on [now].
+  ///
+  /// Precondition: [getSchedule] is valid.
+  /// The validity of a schedule is specified under [checkValidSchedule].
+  ///
+  /// Returns 0 ~ (n - 1) if [now] falls under a [ScheduleEntry];
+  /// Returns [beforeSchool] if [now] is before any [ScheduleEntry];
+  /// Returns [afterSchool] if [now] is after all [ScheduleEntry];
+  /// Return [duringEmptyPeriod] if [now] does not fall under any of the above cases.
+  int getCurrentPeriod(DateTime now){
+    var selectedSchedule = getSchedule(now);
+    assert(checkValidSchedule(selectedSchedule));
+    var currentTimeOfDay = TimeOfDay.fromDateTime(now);
+    for(var i = 0; i < selectedSchedule.length; i++){
+      // Check if the current time is before next period's start time. If true, then there is a break or school haven't started yet.
+      if(timeOfDayDifference(currentTimeOfDay, selectedSchedule[i].startTime) < 0){
+        if(i == 0){
+          return beforeSchool;
+        } else {
+          return duringEmptyPeriod;
+        }
+      }
+      if(selectedSchedule[i].isUnderDuration(currentTimeOfDay))
+        return i;
+    }
+    return afterSchool;
+  }
+}
+
+class SchoolDaySchedules{
+
+}
 
 /// The information for school day for a period of time, such as whether it is a regular day, non-instructional, or a national holiday
 ///
@@ -140,7 +250,14 @@ class SchoolDayInformation{
   ///Is the this event ignored when displaying in a calendar
   bool ignoreInCalendar;
 
-  SchoolDayInformation({@required this.schoolDayType,@required this.title,this.greeting,@required this.duration,this.ignoreInCalendar = false});
+
+  SchoolDayInformation({
+    @required this.schoolDayType,
+    @required this.title,
+    this.greeting,
+    @required this.duration,
+    this.ignoreInCalendar = false
+  });
 
   /// Check if [currentDate] is under this duration.
   bool isUnderDuration(DateTime currentDate){
@@ -545,9 +662,6 @@ class _DetailedCalendar extends State<DetailedCalendar>{
             break;
           case SchoolDayType.schoolDay:
             dotColor = Colors.grey;
-            break;
-          case SchoolDayType.thirskDay:
-            dotColor = Colors.green[400];
             break;
           default:
 
