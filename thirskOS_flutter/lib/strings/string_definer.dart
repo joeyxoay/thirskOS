@@ -3,16 +3,16 @@ import 'string_getter.dart';
 DisplayString stringAsset = DisplayString(stringMap:
 {
   'calendar/break/spring_break':'Spring Break!',
-  'calendar/break/spring_break/greeting':'.',
+  'calendar/break/spring_break/greeting':'Put some rainboots on and roam free in the world!',
   'calendar/break/summer_break':'Summer Break!',
   'calendar/break/summer_break/greeting':'',
   'calendar/break/christmas':'Christmas Break!',
   'calendar/break/christmas/greeting':'May Santa Claus bring everything you wished for.',
 
-  'calendar/holiday/family_day':'No School - Family Day',
+  'calendar/holiday/family_day':'Family Day',
   'calendar/holiday/family_day/greeting':'Spend some quality time with your family. It is FAMILY day afterall.',
   'calendar/holiday/good_friday':"Good Friday",
-  'calendar/holiday/good_friday/greeting':'',
+  'calendar/holiday/good_friday/greeting':'It\'s the Good Friday!',
   'calendar/holiday/labour_day':'Labour Day',
   'calendar/holiday/labour_day/greeting':'',
   'calendar/holiday/rememberance':'Rememberance Day',
@@ -21,19 +21,19 @@ DisplayString stringAsset = DisplayString(stringMap:
   'calendar/holiday/teachers_convention/greeting':"It's time for the teachers to expand their knowledge",
   'calendar/holiday/thanksgiving':'Thanksgiving',
   'calendar/holiday/thanksgiving/greeting':'',
-  'calendar/holiday/victoria_day':'No School - Victoria Day',
-  'calendar/holiday/victoria_day/greeting':'',
+  'calendar/holiday/victoria_day':'Victoria Day',
+  'calendar/holiday/victoria_day/greeting':'We get the day off thanks to Queen Victoria!',
 
   'calendar/last_day':'Last day of school',
-  'calendar/last_day/christmas_greeting':'Last Day of School! Have a good winter break! See you in 2020!',
+  'calendar/last_day/christmas_greeting':'Last Day of School! Have a good winter break! See you next year!',
   'calendar/last_day/spring_greeting':'Last Day of School! Go enjoy your spring break!',
-  'calendar/last_day/summer_greeting':'',
+  'calendar/last_day/summer_greeting':'Last Day of School! Go enjoy your summer break!',
 
   'calendar/noninstructional':'Non-instructional Day',
   'calendar/noninstructional/greeting':'Enjoy your the day on your bed, you lazy potato',
 
   'calendar/resume_class':'First day of school',
-  'calendar/resume_class/greeting':'Hope you had a good winter break. Enjoy your last week of Semester 1!',
+  'calendar/resume_class/greeting':'Welcome back to Robert Thirsk High School!',
 
   'calendar/schoolday/beginning_of_school':'School starts in',
   'calendar/schoolday/connect':'Connect',
