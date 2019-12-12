@@ -17,3 +17,13 @@ void goToPage(BuildContext context,Widget page){
     MaterialPageRoute(builder: (context) => page), //goes to built in page when button pressed
   );
 }
+///Returns the minute value for [timeOfDay]
+int timeOfDayToInt(TimeOfDay timeOfDay){
+  return timeOfDay.hour * TimeOfDay.minutesPerHour + timeOfDay.minute;
+}
+/// Calculate the difference between [a] and [b].
+///
+/// If [a] is later than [b], the value is positive; otherwise, it's negative.
+int timeOfDayDifference(TimeOfDay a, TimeOfDay b){
+  return timeOfDayToInt(a) - timeOfDayToInt(b);
+}

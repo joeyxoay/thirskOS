@@ -1,21 +1,12 @@
-
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+//import 'package:intl/intl.dart';
+import 'package:thirskOS/calendar/calendar.dart';
 import 'event_feed/event_display.dart';
 import 'general_functions.dart';
 import 'strings/string_definer.dart';
 import 'lunch_menu/menu_display.dart';
 import 'dev_function_page.dart';
-//import 'package:flutter_linkify/flutter_linkify.dart';// for later use with video links
-//import 'package:http/http.dart' as http;
-//import 'package:json_annotation/json_annotation.dart';
-//import 'dart:convert';
-//import 'package:path_provider/path_provider.dart';
-//import 'package:date_format/date_format.dart';
-//import 'dart:io';
-//import 'package:sprintf/sprintf.dart';
-//imported packages etc.
 
 const ctsURL ="";//placeholder for button link for cts page
 
@@ -47,20 +38,22 @@ const String APP_API_KEY = "AIzaSyCE5gLyCtDW6dzAkPBowBdeXqAy5iw7ebY";
 
 void main() => runApp(MyApp());
 
-///A button for all your navigation needs. Chris decided he wants to make 3 classes for something with the same functionality
-///for some reason. I helped him by combine three same class into one. Useful if we decide to make more pages.
+/// A button for all your navigation needs. Displays on the bottom of the app.
+/// 
+/// Chris decided he wants to make 3 classes for something with the same functionality for some reason. 
+/// I helped him by combine three same class into one. Useful if we decide to make more pages.
 class NavigationButton extends StatelessWidget{
   final String buttonImage;
-  final String buttonTextRef;
+  final String buttonText;
 
-  NavigationButton({Key key, @required this.buttonImage, @required this.buttonTextRef}) : super(key: key);
+  NavigationButton({Key key, @required this.buttonImage, @required this.buttonText}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return new Container( child: Column(
       children: <Widget>[
 
         new Image(image: new AssetImage(buttonImage), height: 34, width: 34,),
-        new Text(getString(buttonTextRef),
+        new Text(buttonText,
           style: new TextStyle(
               fontSize: 10,
               fontFamily: 'LEMONMILKLIGHT',
@@ -74,15 +67,16 @@ class NavigationButton extends StatelessWidget{
 
   }
 }
-///The button widget for linking to resources in the thrive page.
+///The button widget for linking to resources in [ThrivePage].
 class ThriveButton extends StatelessWidget{
-
+  /// The text to be displayed on the button.
   final String buttonName;
-  //final Color highlightColor;
+  /// The color to be filled in the button.
   final Color fillColor;
+  /// Action to take when the button is pressed.
   final Function onPressed;
 
-  ThriveButton({Key key, @required this.buttonName,@required this.fillColor, @required this.onPressed}) : super(key: key);
+  ThriveButton({Key key, @required this.buttonName, this.fillColor, @required this.onPressed}) : super(key: key);
   @override
   Widget build(BuildContext context){
     return new RawMaterialButton(  //creates button
@@ -90,21 +84,21 @@ class ThriveButton extends StatelessWidget{
       shape: StadiumBorder(), //style & shape of button
       highlightColor: Color(0x0083ff), //dw about this
       padding: EdgeInsets.all(10), //space between edge of button and text
-      fillColor: fillColor, //button colour
+      fillColor: fillColor ?? Colors.grey, //button colour
       splashColor: Colors.white, //colour of button when tapped
 
       onPressed: onPressed,
     );
   }
 }
-///A class to store data for the links to a resource in the thrive page
+///A class to store data for the links to a resource in [ThrivePage].
 class ThriveButtonData{
   String name;
   Function clickAction;
   ThriveButtonData(this.name,this.clickAction);
 }
 
-//page displayed on startup
+/// The home page of the application. Displays on startup.
 class HomePage extends StatelessWidget{
 
   //if/else statement which essentially says when the focus/connect rooms link is to be opened, how will it be opened on both IOS and ANDROID
@@ -133,6 +127,7 @@ class HomePage extends StatelessWidget{
           height: 5.0,
         ), //these containers act as spacers between pieces of content on the page
 
+        new DateDisplay(),/*
         new Text(
           new DateFormat("| EEEE | MMM d | yyyy |").format(new DateTime.now(),),
           style: new TextStyle(
@@ -142,7 +137,7 @@ class HomePage extends StatelessWidget{
               fontFamily: 'LEMONMILKLIGHT'
           ),
           textAlign: TextAlign.center,
-        ),
+        ),*/
 
 
         //when video announcements are created at thirsk, instead of using a video player there should be a list of links inside a scrollable text box that expands
@@ -171,6 +166,7 @@ class HomePage extends StatelessWidget{
   }
 } //Home Page
 
+/// The page that displays the people who made this app
 class CreditPage extends StatelessWidget{  //Development credits page
 
   @override
@@ -285,10 +281,14 @@ class CreditPage extends StatelessWidget{  //Development credits page
   }
 } //Dev Credits Page
 
+///The "Thrive" page which displays links to useful resources on many CBE websites. Why it is not in-app? Who knows.
 class ThrivePage extends StatelessWidget{  //Thrive Page
 
+  /// A list of buttons to be displayed on [ThrivePage]
   final List<ThriveButtonData> buttons;
+  /// The fill color of the first button on [ThrivePage]
   final Color initColor;
+  /// The fill color of the last button on [ThrivePage], if there is more than 1 buttons.
   final Color finalColor;
   ThrivePage({Key key, this.buttons, this.initColor, this.finalColor}) : super(key:key);
 
@@ -324,6 +324,7 @@ class ThrivePage extends StatelessWidget{  //Thrive Page
       ),
     ];
     var i = 0;
+    // The colors of the buttons are calculated linearly in [ThrivePage]. Each button are added to the list one by one.
     for(var oneButtonData in buttons){
       returnVal.add(new ThriveButton(
           buttonName: oneButtonData.name,
@@ -340,14 +341,11 @@ class ThrivePage extends StatelessWidget{  //Thrive Page
   }
 }  //Thrive Page
 
+/// The page which displays information regarding Diploma Exams.
 class DiplomaPage extends StatelessWidget{   //Built in page for Exam Resources
-
 
   @override
   Widget build(BuildContext context) {
-    //var dpText = ;
-    //var rt = ;
-    //var wm = ;
     return new Material( color: Colors.grey[800], child: Column(
       children: <Widget>[
 
@@ -429,7 +427,7 @@ class DiplomaPage extends StatelessWidget{   //Built in page for Exam Resources
         ),
 
         new Text(
-          "This page is not final and will be updated next year!",
+          getString('misc/under_construction'),
           textAlign: TextAlign.center,
           style: TextStyle(color: Colors.white, fontSize: 10),
         ),
@@ -439,7 +437,8 @@ class DiplomaPage extends StatelessWidget{   //Built in page for Exam Resources
   }
 } //Exam Resources Page
 
-class CtsPage extends StatelessWidget{   //CTS page
+/// The page which displays resources regarding CTS. I have no idea why Chris wants to add that.
+class CtsPage extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
@@ -510,7 +509,7 @@ class CtsPage extends StatelessWidget{   //CTS page
         ),
 
         new Text(
-          "This page is not final and will be updated next year!",
+          getString('misc/under_construction'),
           textAlign: TextAlign.center,
           style: TextStyle(color: Colors.white, fontSize: 10),
         ),
@@ -522,6 +521,7 @@ class CtsPage extends StatelessWidget{   //CTS page
   }
 }  //CTS Page
 
+/// Information regarding sports.
 class SportsPage extends StatelessWidget{
 
   @override
@@ -587,13 +587,14 @@ class SportsPage extends StatelessWidget{
 
         ),
 
-        new Text("This page is not final and will be updated next year!", textAlign: TextAlign.center, style: TextStyle(color: Colors.white, fontSize: 10),),
+        new Text(getString('misc/under_construction'), textAlign: TextAlign.center, style: TextStyle(color: Colors.white, fontSize: 10),),
 
       ],
     ),);
   }
 } //Athletics Page
 
+/// The page that contains the events posted by the teachers.
 class EventPage extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
@@ -621,6 +622,7 @@ class EventPage extends StatelessWidget{
   }
 }  //Events Page
 
+/// The core app.
 class MyApp extends StatelessWidget {
   // This widget is the root of the application, the skeleton if you will.
   @override
@@ -684,15 +686,15 @@ class MyApp extends StatelessWidget {
               bottomNavigationBar: new TabBar( //creates bottom navigation bar
                 tabs: [
                   Tab(
-                    child: new NavigationButton(buttonImage: 'assets/thrive.png', buttonTextRef: 'thrive/button'),
+                    child: new NavigationButton(buttonImage: 'assets/thrive.png', buttonText: getString('thrive/button')),
                   ),
 
                   Tab(
-                    child: new NavigationButton(buttonImage: 'assets/home.png', buttonTextRef: 'home/button'),
+                    child: new NavigationButton(buttonImage: 'assets/home.png', buttonText: getString('home/button')),
                   ),
 
                   Tab(
-                    child: new NavigationButton(buttonImage: 'assets/event.png', buttonTextRef: 'event/button'),
+                    child: new NavigationButton(buttonImage: 'assets/event.png', buttonText: getString('event/button')),
 
                   ),
 

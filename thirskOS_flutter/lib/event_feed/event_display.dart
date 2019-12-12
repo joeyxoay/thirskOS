@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
@@ -7,7 +8,7 @@ import 'dart:convert';
 //import 'package:date_format/date_format.dart';
 import 'dart:async';
 import 'package:flutter_linkify/flutter_linkify.dart';
-import 'package:url_launcher/url_launcher.dart';
+//import 'package:url_launcher/url_launcher.dart';
 import 'package:thirskOS/general_functions.dart';
 import 'package:thirskOS/strings/string_definer.dart';
 import 'package:sprintf/sprintf.dart';
@@ -15,19 +16,7 @@ import 'package:sprintf/sprintf.dart';
 
 part 'event_display.g.dart';
 
-@JsonSerializable()
-class OnePostDate{
-  String date;
-  OnePostDate({this.date});
-  factory OnePostDate.fromJson(Map<String, dynamic> json) => _$OnePostDateFromJson(json);
-  factory OnePostDate.directFromJson(String jsonVal){
-    Map tempMap = json.decode(jsonVal);
-    return OnePostDate.fromJson(tempMap);
-  }
-
-  Map<String, dynamic> toJson() => _$OnePostDateToJson(this);
-}
-
+///A post in the event feed. Can be converted to or from JSON
 @JsonSerializable()
 class OnePostData
 {
@@ -70,15 +59,15 @@ class OnePostData
     }
     else{
       if(deltaTime.inDays >= 730)
-        return sprintf(getString('event/time/years_ago'),[deltaTime.inDays / 365]);
+        return sprintf(getString('event/time/years_ago'),[deltaTime.inDays ~/ 365]);
       else if(deltaTime.inDays >= 365)
         return getString('event/time/a_year_ago');
       else if(deltaTime.inDays >= 60)
-        return sprintf(getString('event/time/months_ago'),[deltaTime.inDays / 30]);
+        return sprintf(getString('event/time/months_ago'),[deltaTime.inDays ~/ 30]);
       else if(deltaTime.inDays >= 30)
         return getString('event/time/a_month_ago');
       else if(deltaTime.inDays >= 14)
-        return sprintf(getString('event/time/weeks_ago'),[deltaTime.inDays / 7]);
+        return sprintf(getString('event/time/weeks_ago'),[deltaTime.inDays ~/ 7]);
       else if(deltaTime.inDays >= 7)
         return getString('event/time/a_week_ago');
       else if(deltaTime.inDays >= 2)
@@ -102,9 +91,11 @@ class OnePostData
     }
   }
 }
+///The widget that displays a [OnePostData]'s JSON. Is the preview of [OneEventPostDetail]
 class OneEventPost extends StatelessWidget{
   OneEventPost({Key key,@required this.postJson, this.previewStringLength = 200}) : super(key:key);
   final String postJson;
+  //
   final int previewStringLength;
   @override
   Widget build(BuildContext context) {
@@ -177,10 +168,12 @@ class OneEventPost extends StatelessWidget{
       );
 
     } catch (e) {
-      return Container();
+      //rethrow;
+      return Text("Oopsie doopsie we screwed up");
     }
   }
 }
+///The detailed page of a [OneEventPost]
 class OneEventPostDetail extends StatelessWidget{
   final OnePostData postData;
   OneEventPostDetail({Key key, @required this.postData}) : super(key:key);
@@ -209,9 +202,13 @@ class OneEventPostDetail extends StatelessWidget{
 
               Container(height: 20.0,),
 
-              Text(postData.title,style: TextStyle(fontSize: 28.0, fontFamily: 'ROCK', color: Colors.white),),
+              Text(
+                postData.title,
+                style: TextStyle(fontSize: 28.0, fontFamily: 'ROCK', color: Colors.white),
+                textAlign: TextAlign.center,
+              ),
 
-              Container(height: 10.0,),
+              //Container(height: 10.0,),
 
               Row(
                 children: <Widget>[
@@ -219,16 +216,20 @@ class OneEventPostDetail extends StatelessWidget{
                   Text(postData.postDateReadable),
                 ],
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
+              ),
+              Divider(color: Colors.white,),
+              Container(
+                width:double.infinity,
+                child: Linkify(
+                  //takes post content searches for links and makes them clickable
+                  onOpen: (link) async => launchURL(link.url),
+                  text: postData.postContent.replaceAll('#039;', '\''), //replaces html code for ' with ' character
+                  style: TextStyle(fontSize: 16, fontFamily: 'ROCK', color: Colors.white),
+                  linkStyle: TextStyle(color: Colors.blue[800]),
+                  textAlign: TextAlign.left,
+                ),
               ),
 
-              Linkify(
-                //takes post content searches for links and makes them clickable
-                onOpen: (link) async => launchURL(link.url),
-                text: postData.postContent.replaceAll('#039;', '\''), //replaces html code for ' with ' character
-                style: TextStyle(fontSize: 16, fontFamily: 'ROCK', color: Colors.white),
-                linkStyle: TextStyle(color: Colors.blue[800]),
-              ),
             ],
           ),
           margin: EdgeInsets.only(left:10.0,right:10.0),
@@ -236,9 +237,8 @@ class OneEventPostDetail extends StatelessWidget{
     );
   }
 }
-
+///The Event page which contains all the events
 class AllEventPosts extends StatefulWidget{
-
   @override
   State<StatefulWidget> createState() {
 
@@ -269,9 +269,11 @@ class _AllEventPostsState extends State<AllEventPosts>{
             if(snapshot.hasData) {
               //print(snapshot.data);
               //print(LinkParser.getListOfLinks(snapshot.data));
+              convertedData = [];
               for(int i = 0; i < snapshot.data.length; i++){
                 convertedData.add(OneEventPost(postJson: snapshot.data[i]));
               }
+              //print(convertedData);
               return Column(
                 children: convertedData,
 
@@ -281,7 +283,7 @@ class _AllEventPostsState extends State<AllEventPosts>{
             return Column(
               children: <Widget>[
                 CircularProgressIndicator(),
-                Text('New Posts Coming Soon...', style: TextStyle(color: Colors.white),),
+                Text(getString('misc/loading'), style: TextStyle(color: Colors.white),),
               ],
               crossAxisAlignment: CrossAxisAlignment.center,
             );

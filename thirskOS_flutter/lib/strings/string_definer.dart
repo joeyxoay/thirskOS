@@ -1,20 +1,64 @@
 import 'string_getter.dart';
-///The dictionary of string referred to in the app. Helps organize strings
+///The dictionary of string referred to in the app. Helps organize strings.
 DisplayString stringAsset = DisplayString(stringMap:
 {
+  'calendar/break/spring_break':'Spring Break!',
+  'calendar/break/spring_break/greeting':'Put some rainboots on and roam free in the world!',
+  'calendar/break/summer_break':'Summer Break!',
+  'calendar/break/summer_break/greeting':'',
+  'calendar/break/christmas':'Christmas Break!',
+  'calendar/break/christmas/greeting':'May Santa Claus bring everything you wished for.',
+
+  'calendar/holiday/family_day':'Family Day',
+  'calendar/holiday/family_day/greeting':'Spend some quality time with your family. It is FAMILY day afterall.',
+  'calendar/holiday/good_friday':"Good Friday",
+  'calendar/holiday/good_friday/greeting':'It\'s the Good Friday!',
+  'calendar/holiday/labour_day':'Labour Day',
+  'calendar/holiday/labour_day/greeting':'',
+  'calendar/holiday/rememberance':'Rememberance Day',
+  'calendar/holiday/rememberance/greeting':'Put your poppy on, and solute to the soldiers who have fought hard for our country. Lest we forget.',
+  'calendar/holiday/teachers_convention':'Teacher\'s Convention',
+  'calendar/holiday/teachers_convention/greeting':"It's time for the teachers to expand their knowledge",
+  'calendar/holiday/thanksgiving':'Thanksgiving',
+  'calendar/holiday/thanksgiving/greeting':'',
+  'calendar/holiday/victoria_day':'Victoria Day',
+  'calendar/holiday/victoria_day/greeting':'We get the day off thanks to Queen Victoria!',
+
+  'calendar/last_day':'Last day of school',
+  'calendar/last_day/christmas_greeting':'Last Day of School! Have a good winter break! See you next year!',
+  'calendar/last_day/spring_greeting':'Last Day of School! Go enjoy your spring break!',
+  'calendar/last_day/summer_greeting':'Last Day of School! Go enjoy your summer break!',
+
+  'calendar/noninstructional':'Non-instructional Day',
+  'calendar/noninstructional/greeting':'Enjoy your the day on your bed, you lazy potato',
+
+  'calendar/resume_class':'First day of school',
+  'calendar/resume_class/greeting':'Welcome back to Robert Thirsk High School!',
+
+  'calendar/schoolday/beginning_of_school':'School starts in',
+  'calendar/schoolday/connect':'Connect',
+  'calendar/schoolday/ends_in':'ends in',
+  'calendar/schoolday/end_of_school':'School is over',
+  'calendar/schoolday/focus':'Focus',
+  'calendar/schoolday/lunch':'Lunch',
+  'calendar/schoolday/period':'Period',
+
+  'calendar/view_detail':'View Detail',
+
   'credit/app_title' : 'THIRSK OUTER SPACE',
   'credit/version' : 'Closed Alpha: v0.1',
   'credit/2018/header' : 'Credits(2018~2019):',
   'credit/2018/credit' :
-    'Creator/Lead App Developer: Christopher Samra\n' +
-    'Prototype App Co-Developer: Hasin Zaman\n' +
-    'App Co-Developer: Roger Cao\n' +
+    'Creator/Lead App Developer: Christopher Samra\n'
+    'Prototype App Co-Developer: Hasin Zaman\n'
+    'App Co-Developer: Roger Cao\n'
     'Backend Developer: Dunedin Molnar, Hasin Zaman',
   'credit/2019/header' : 'Credits(2019~2020):',
   'credit/2019/credit' :
-    'Creator/Lead App Developer: Roger Cao\n' +
-    'Backend Developer: Umut Emre\n' +
-    'Random Nobodys:\n-Matt Groeneveldt\n-Ava Daly\n-Joey Koay\n-Tom Allwright\n' + ///To get promoted, actually tell me what you're doing
+    'Lead App Developer: Roger Cao\n'
+    'Lead Backend Developer: Umut Emre\n'
+    'Frontend Developers: Danial Baek, Joey Koay\n'
+    'Random Nobodys:\n-Matt Groeneveldt\n-Ava Daly\n-Tom Allwright\n' //To get promoted, actually tell me what you're doing
     'Closed Alpha Testers: No one yet',
 
   'event/button':'EVENTS',
@@ -49,11 +93,20 @@ DisplayString stringAsset = DisplayString(stringMap:
   'misc/back':'Back',
   'misc/loading':'Loading...',
   'misc/test':'test string',
+  'misc/under_construction':'This page is not final and will be updated next year!',
 
   'thrive/button':'THRIVE',
   'thrive/thrive_prompt':'START THRIVING @ Thirsk!',
 
 });
+/// Gets the string from [stringAsset] based on the identifier.
+///
+/// Example:
+/// ```dart
+/// getString('misc/loading'); //Will output 'Loading...' when stringAsset['misc/loading'] == 'Loading'
+/// ```
+///
+/// Prints a warning if there is no entry for the identifier or the entry is blank.
 String getString(String identifier){
   return stringAsset.getString(identifier);
 }

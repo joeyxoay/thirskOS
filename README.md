@@ -1,4 +1,4 @@
-# thirskOS
+# ThirskOS
 
 Thirsk Outer Space(ThirskOS from now on) is an application developed by the students of Robert Thirsk High School.
 
