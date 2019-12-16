@@ -10,7 +10,7 @@ import 'dart:async';
 import 'package:flutter_linkify/flutter_linkify.dart';
 //import 'package:url_launcher/url_launcher.dart';
 import 'package:thirskOS/general_functions.dart';
-import 'package:thirskOS/strings/string_definer.dart';
+import 'package:thirskOS/strings/string_getter.dart';
 import 'package:sprintf/sprintf.dart';
 //import 'dart:io';
 

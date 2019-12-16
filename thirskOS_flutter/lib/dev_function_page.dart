@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 //import 'package:markdown/markdown.dart';//Use for supporting markdown texts
 //import 'package:flutter_html/flutter_html.dart';
-import 'strings/string_definer.dart';
+import 'strings/string_getter.dart';
 import 'dart:io';
 
 class MarkdownTest extends StatelessWidget{

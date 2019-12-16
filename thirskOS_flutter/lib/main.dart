@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:thirskOS/calendar/calendar.dart';
 import 'event_feed/event_display.dart';
 import 'general_functions.dart';
-import 'strings/string_definer.dart';
+import 'strings/string_getter.dart';
 import 'lunch_menu/menu_display.dart';
 import 'dev_function_page.dart';
 
