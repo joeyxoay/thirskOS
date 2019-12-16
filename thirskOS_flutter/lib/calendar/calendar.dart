@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:thirskOS/strings/string_definer.dart';
+import 'package:thirskOS/strings/string_getter.dart';
 import 'package:thirskOS/general_functions.dart';
 import 'package:table_calendar/table_calendar.dart';
 //import 'package:sprintf/sprintf.dart';
@@ -163,14 +163,14 @@ class SchoolDaySchedule{
   /// If null, then [defaultAlternateCondition] is used.
   DateTimeCondition alternativeCondition;
 
-  static const int beforeSchool = -1;
-  static const int duringEmptyPeriod = -2;
-  static const int afterSchool = -3;
+  //static const int beforeSchool = -1;
+  //static const int duringEmptyPeriod = -2;
+  int get scheduleLength => schedule.length;
 
   /// The default [alternativeCondition] that is used.
   /// 
   /// Returns true when [a] is on an even day such as a Tuesday.
-  static bool defaultAlternateCondition(DateTime a){
+  static bool defaultAlternativeCondition(DateTime a){
     return a.weekday % 2 == 0;
   }
   /// Check if [schedule] is valid.
@@ -210,31 +210,53 @@ class SchoolDaySchedule{
   /// Precondition: [schedule] is valid.
   /// The validity of a schedule is specified under [checkValidSchedule].
   ///
-  /// Returns 0 ~ (n - 1) if [now] falls under a [ScheduleEntry];
-  /// Returns [beforeSchool] if [now] is before any [ScheduleEntry];
-  /// Returns [afterSchool] if [now] is after all [ScheduleEntry];
-  /// Return [duringEmptyPeriod] if [now] does not fall under any of the above cases.
-  int getCurrentPeriod(DateTime now){
+  /// There are 3 possible types of return values:(n is the array size of [schedule])
+  /// * Returns 0 ~ (n - 1) if [now] falls under a [ScheduleEntry];
+  /// * Returns -n ~ -1 if [now] is before a [ScheduleEntry], but does not fall under any;
+  ///   * ReturnVal + n is the index of the [ScheduleEntry] that [now] is immediately before.
+  /// * Returns n if [now] is after all [ScheduleEntry];
+  int getCurrentPeriod(TimeOfDay now){
     //var selectedSchedule = getSchedule(now);
     //assert(checkValidSchedule(selectedSchedule));
-    var currentTimeOfDay = TimeOfDay.fromDateTime(now);
+    //var currentTimeOfDay = TimeOfDay.fromDateTime(now);
     for(var i = 0; i < schedule.length; i++){
       // Check if the current time is before next period's start time. If true, then there is a break or school haven't started yet.
-      if(timeOfDayDifference(currentTimeOfDay, schedule[i].startTime) < 0){
-        if(i == 0){
-          return beforeSchool;
-        } else {
-          return duringEmptyPeriod;
-        }
+      if(timeOfDayDifference(now, schedule[i].startTime) < 0){
+        return(i - schedule.length);
       }
-      if(schedule[i].isUnderDuration(currentTimeOfDay))
+      if(schedule[i].isUnderDuration(now))
         return i;
     }
-    return afterSchool;
+    return scheduleLength;
+  }
+
+  String getCurrentPeriodText(int periodIndex, DateTime now){
+
+    var useAlternativeTitle = (alternativeCondition ?? defaultAlternativeCondition)(now);
+    var currentTime = TimeOfDay.fromDateTime(now);
+    if(periodIndex >= 0 && periodIndex < scheduleLength){
+      return "${useAlternativeTitle ? schedule[periodIndex].alternativeTitle : schedule[periodIndex].title} "
+          "${getString('calendar/schoolday/ends_in')} "
+          "${timeOfDayDifference(schedule[periodIndex].endTime, currentTime)} "
+          "${getString('calendar/schoolday/minutes')}";
+    } else if(periodIndex >= -scheduleLength && periodIndex < 0){
+      return "${useAlternativeTitle ? schedule[periodIndex + scheduleLength].alternativeTitle : schedule[periodIndex + scheduleLength].title} "
+          "${getString('calendar/schoolday/starts_in')} "
+          "${timeOfDayDifference(schedule[periodIndex + scheduleLength].startTime, currentTime)} "
+          "${getString('calendar/schoolday/minutes')}";
+    } else if(periodIndex == scheduleLength){
+      return getString('calendar/schoolday/end_of_school');
+    }
+    throw ArgumentError("periodIndex must be between -scheduleLength and scheduleLength");
+  }
+  
+  String getPeriodTextDateTime(DateTime now){
+    return getCurrentPeriodText(getCurrentPeriod(TimeOfDay.fromDateTime(now)), now);
   }
 }
-
+/// A static class for a list of preset schedules.
 class SchoolDaySchedules{
+  /// The default schedule of the school from Monday to Thursday.
   static SchoolDaySchedule defaultSchedule = SchoolDaySchedule(
     schedule: <ScheduleEntry>[
       ScheduleEntry(
@@ -273,6 +295,7 @@ class SchoolDaySchedules{
       ),
     ],
   );
+  /// The default schedules for school on Friday. Shorter classes with connect.
   static SchoolDaySchedule fridaySchedule = SchoolDaySchedule(
     schedule: <ScheduleEntry>[
       ScheduleEntry(
@@ -295,7 +318,7 @@ class SchoolDaySchedules{
       ScheduleEntry(
         TimeOfDay(hour: 11, minute: 15),
         TimeOfDay(hour: 11, minute: 35),
-        getString('calendar/schoolday/lunch'),
+        getString('calendar/schoolday/nutrition_break'),
       ),
       ScheduleEntry(
         TimeOfDay(hour: 11, minute: 35),
@@ -318,14 +341,16 @@ class SchoolDaySchedules{
 /// Used in [SchoolCalendar] as a list of events in the school.
 class SchoolDayInformation{
   SchoolDayType schoolDayType;
-  ///Name of this class such as "Victoria Day" or "Christmas Break"
+  /// Name of this class such as "Victoria Day" or "Christmas Break"
   String title;
-  ///The greeting that should be displayed for this event
+  /// The greeting that should be displayed for this event
   String greeting;
-  ///The duration for this event.
+  /// The duration for this event.
   EventDuration duration;
-  ///Is the this event ignored when displaying in a calendar
+  /// Is the this event ignored when displaying in a calendar
   bool ignoreInCalendar;
+  /// If specified, override the default schedule.
+  SchoolDaySchedule overrideSchedule;
 
 
   SchoolDayInformation({
@@ -333,7 +358,8 @@ class SchoolDayInformation{
     @required this.title,
     this.greeting,
     @required this.duration,
-    this.ignoreInCalendar = false
+    this.ignoreInCalendar = false,
+    this.overrideSchedule,
   });
 
   /// Check if [currentDate] is under this duration.
@@ -349,26 +375,40 @@ class SchoolDayInformation{
 
 ///A calendar for a typical school year
 class SchoolCalendar{
-  ///The list of events for a school year
+  /// The list of events for a school year
   List<SchoolDayInformation> eventLists;
-  ///A map that maps the event ID found on [TableCalendar] and the referenced [SchoolDayInformation]
-  //Map<String,SchoolDayInformation> _identifierEventMap;
-  ///A private variable that tracks what id should be assigned to [_identifierEventMap]
-  //int _identifierCount = 0;
-
-  ///Get the private variable [_identifierEventMap]
-  //Map get getIdentifierMap => _identifierEventMap;
+//  /// A map that maps the event ID found on [TableCalendar] and the referenced [SchoolDayInformation]
+//  Map<String,SchoolDayInformation> _identifierEventMap;
+//  /// A private variable that tracks what id should be assigned to [_identifierEventMap]
+//  int _identifierCount = 0;
+//
+//  /// Get the private variable [_identifierEventMap]
+//  Map get getIdentifierMap => _identifierEventMap;
 
   SchoolCalendar({this.eventLists}){
     //_identifierEventMap = new Map<String,SchoolDayInformation>();
   }
-  ///Get what information does [currentDate] have. Select from the first-most event that falls under the duration.
+  /// Get what [SchoolDayInformation] does [currentDate] have.
+  /// Select from the first-most event that falls under the duration.
   SchoolDayInformation getInfo(DateTime currentDate){
     for(var oneEvent in eventLists){
       if(oneEvent.isUnderDuration(currentDate))
         return oneEvent;
     }
     return null;
+  }
+  /// Get [currentDate]'s [SchoolDaySchedule].
+  ///
+  /// The first object of [eventLists] that [currentDate] falls under and [SchoolDayInformation.overrideSchedule] is non-null
+  /// is selected and returns [SchoolDayInformation.overrideSchedule] that is associated with that object.
+  ///
+  /// If no object falls under the above category, [SchoolDaySchedules.defaultSchedule] is selected instead.
+  SchoolDaySchedule getSchedule(DateTime currentDate){
+    for(var oneEvent in eventLists){
+      if(oneEvent.isUnderDuration(currentDate) && oneEvent.overrideSchedule != null)
+        return oneEvent.overrideSchedule;
+    }
+    return SchoolDaySchedules.defaultSchedule;
   }
   ///Get the holiday calendar used in [TableCalendar]. Note that the event id, rather than the actual event reference is passed. Might change later
   Map<DateTime,List> getHolidayCalendar([DateTime startDay, DateTime endDay]){
@@ -568,12 +608,22 @@ SchoolCalendar schoolCalendar = new SchoolCalendar(
         duration: EventDuration(DurationType.weekly,[false,false,false,false,false,true,true]),
         ignoreInCalendar: true,
       ),
+      // Friday schedules
+      SchoolDayInformation(
+        schoolDayType: SchoolDayType.schoolDay,
+        title: "Friday!",
+        duration: EventDuration(DurationType.weekly,[false,false,false,false,true,false,false]),
+        ignoreInCalendar: true,
+        overrideSchedule: SchoolDaySchedules.fridaySchedule,
+      ),
+      // Non-Friday schedules
       SchoolDayInformation(
         schoolDayType: SchoolDayType.schoolDay,
         title: "Regular Class",
-        duration: EventDuration(DurationType.weekly,[true,true,true,true,true,false,false]),
+        duration: EventDuration(DurationType.weekly,[true,true,true,true,false,false,false]),
         ignoreInCalendar: true,
-      )
+        overrideSchedule: SchoolDaySchedules.defaultSchedule,
+      ),
     ]
 );
 ///A widget that displays information such as the date of today or which period it is now
@@ -588,38 +638,42 @@ class _DateDisplayState extends State<DateDisplay>{
     var currentDate = DateTime.now();
     var todaysInfo = schoolCalendar.getInfo(currentDate);
     var currentPeriod = "No Class";
-    int timeOfDayToInt(int hour,int minute) => hour * 60 + minute;
-    int datetimeToInt(DateTime time) => timeOfDayToInt(time.hour, time.minute);
+//    int timeOfDayToInt(int hour,int minute) => hour * 60 + minute;
+//    int datetimeToInt(DateTime time) => timeOfDayToInt(time.hour, time.minute);
     if(todaysInfo.schoolDayType == SchoolDayType.schoolDay){
-      var periods = [[0,2,1,4,3],[0,1,2,3,4]];
-      bool finished = false;
-      void setCurrentPeriod(int hour, int minute, String text){
-        if(!finished && datetimeToInt(currentDate) < timeOfDayToInt(hour,minute)) {
-          currentPeriod = text + " " +
-              (timeOfDayToInt(hour, minute) - datetimeToInt(currentDate))
-                  .toString() + " minute(s).";
-          finished = true;
-        }
-      }
-      if(currentDate.weekday == 5){
-        setCurrentPeriod(8,30,getString('calendar/schoolday/beginning_of_school'));
-        setCurrentPeriod(9,30,getString('calendar/schoolday/period') + " " + periods[currentDate.weekday % 2][1].toString() + " " + getString('calendar/schoolday/ends_in'));
-        setCurrentPeriod(10,15,getString('calendar/schoolday/connect') + " " + getString('calendar/schoolday/ends_in'));
-        setCurrentPeriod(11,15,getString('calendar/schoolday/period') + " " + periods[currentDate.weekday % 2][2].toString() + " " + getString('calendar/schoolday/ends_in'));
-        setCurrentPeriod(11,35,getString('calendar/schoolday/lunch') + " " + getString('calendar/schoolday/ends_in'));
-        setCurrentPeriod(12,35,getString('calendar/schoolday/period') + " " + periods[currentDate.weekday % 2][3].toString() + " " + getString('calendar/schoolday/ends_in'));
-        setCurrentPeriod(13,35,getString('calendar/schoolday/period') + " " + periods[currentDate.weekday % 2][4].toString() + " " + getString('calendar/schoolday/ends_in'));
-      } else {
-        setCurrentPeriod(8,30,getString('calendar/schoolday/beginning_of_school'));
-        setCurrentPeriod(9,45,getString('calendar/schoolday/period') + " " + periods[currentDate.weekday % 2][1].toString() + " " + getString('calendar/schoolday/ends_in'));
-        setCurrentPeriod(10,35,getString('calendar/schoolday/focus') + " " + getString('calendar/schoolday/ends_in'));
-        setCurrentPeriod(11,50,getString('calendar/schoolday/period') + " " + periods[currentDate.weekday % 2][2].toString() + " " + getString('calendar/schoolday/ends_in'));
-        setCurrentPeriod(12,30,getString('calendar/schoolday/lunch') + " " + getString('calendar/schoolday/ends_in'));
-        setCurrentPeriod(13,45,getString('calendar/schoolday/period') + " " + periods[currentDate.weekday % 2][3].toString() + " " + getString('calendar/schoolday/ends_in'));
-        setCurrentPeriod(15,0,getString('calendar/schoolday/period') + " " + periods[currentDate.weekday % 2][4].toString() + " " + getString('calendar/schoolday/ends_in'));
-      }
-      if(!finished)
-        currentPeriod = getString('calendar/schoolday/end_of_school');
+      //TODO: Add display logic for the different periods.
+      var todaysSchedule = schoolCalendar.getSchedule(currentDate);
+      currentPeriod = todaysSchedule.getPeriodTextDateTime(currentDate);
+      //var scheduleIndex
+//      var periods = [[0,2,1,4,3],[0,1,2,3,4]];
+//      bool finished = false;
+//      void setCurrentPeriod(int hour, int minute, String text){
+//        if(!finished && datetimeToInt(currentDate) < timeOfDayToInt(hour,minute)) {
+//          currentPeriod = text + " " +
+//              (timeOfDayToInt(hour, minute) - datetimeToInt(currentDate))
+//                  .toString() + " minute(s).";
+//          finished = true;
+//        }
+//      }
+//      if(currentDate.weekday == 5){
+//        setCurrentPeriod(8,30,getString('calendar/schoolday/beginning_of_school'));
+//        setCurrentPeriod(9,30,getString('calendar/schoolday/period') + " " + periods[currentDate.weekday % 2][1].toString() + " " + getString('calendar/schoolday/ends_in'));
+//        setCurrentPeriod(10,15,getString('calendar/schoolday/connect') + " " + getString('calendar/schoolday/ends_in'));
+//        setCurrentPeriod(11,15,getString('calendar/schoolday/period') + " " + periods[currentDate.weekday % 2][2].toString() + " " + getString('calendar/schoolday/ends_in'));
+//        setCurrentPeriod(11,35,getString('calendar/schoolday/lunch') + " " + getString('calendar/schoolday/ends_in'));
+//        setCurrentPeriod(12,35,getString('calendar/schoolday/period') + " " + periods[currentDate.weekday % 2][3].toString() + " " + getString('calendar/schoolday/ends_in'));
+//        setCurrentPeriod(13,35,getString('calendar/schoolday/period') + " " + periods[currentDate.weekday % 2][4].toString() + " " + getString('calendar/schoolday/ends_in'));
+//      } else {
+//        setCurrentPeriod(8,30,getString('calendar/schoolday/beginning_of_school'));
+//        setCurrentPeriod(9,45,getString('calendar/schoolday/period') + " " + periods[currentDate.weekday % 2][1].toString() + " " + getString('calendar/schoolday/ends_in'));
+//        setCurrentPeriod(10,35,getString('calendar/schoolday/focus') + " " + getString('calendar/schoolday/ends_in'));
+//        setCurrentPeriod(11,50,getString('calendar/schoolday/period') + " " + periods[currentDate.weekday % 2][2].toString() + " " + getString('calendar/schoolday/ends_in'));
+//        setCurrentPeriod(12,30,getString('calendar/schoolday/lunch') + " " + getString('calendar/schoolday/ends_in'));
+//        setCurrentPeriod(13,45,getString('calendar/schoolday/period') + " " + periods[currentDate.weekday % 2][3].toString() + " " + getString('calendar/schoolday/ends_in'));
+//        setCurrentPeriod(15,0,getString('calendar/schoolday/period') + " " + periods[currentDate.weekday % 2][4].toString() + " " + getString('calendar/schoolday/ends_in'));
+//      }
+//      if(!finished)
+//        currentPeriod = getString('calendar/schoolday/end_of_school');
     }
     var schoolText = todaysInfo.greeting != null ? Text(todaysInfo.greeting) : null;
     return Column(

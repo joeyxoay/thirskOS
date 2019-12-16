@@ -1,4 +1,4 @@
-import 'string_getter.dart';
+part of 'string_getter.dart';
 ///The dictionary of string referred to in the app. Helps organize strings.
 DisplayString stringAsset = DisplayString(stringMap:
 {
@@ -36,12 +36,16 @@ DisplayString stringAsset = DisplayString(stringMap:
   'calendar/resume_class/greeting':'Welcome back to Robert Thirsk High School!',
 
   'calendar/schoolday/beginning_of_school':'School starts in',
+  //'calendar/schoolday/break':'Break',
   'calendar/schoolday/connect':'Connect',
   'calendar/schoolday/ends_in':'ends in',
   'calendar/schoolday/end_of_school':'School is over',
   'calendar/schoolday/focus':'Focus',
   'calendar/schoolday/lunch':'Lunch',
+  'calendar/schoolday/minutes':'Minute(s)',
+  'calendar/schoolday/nutrition_break':'"Nutrition Break"',
   'calendar/schoolday/period':'Period',
+  'calendar/schoolday/starts_in':'starts in',
 
   'calendar/view_detail':'View Detail',
 
@@ -99,14 +103,3 @@ DisplayString stringAsset = DisplayString(stringMap:
   'thrive/thrive_prompt':'START THRIVING @ Thirsk!',
 
 });
-/// Gets the string from [stringAsset] based on the identifier.
-///
-/// Example:
-/// ```dart
-/// getString('misc/loading'); //Will output 'Loading...' when stringAsset['misc/loading'] == 'Loading'
-/// ```
-///
-/// Prints a warning if there is no entry for the identifier or the entry is blank.
-String getString(String identifier){
-  return stringAsset.getString(identifier);
-}
